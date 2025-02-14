@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/editmd_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".ui.activities.EditMetadataActivity">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/editmetadata_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorSurface"
+        app:navigationIcon="@drawable/arrow_back"
+        app:title="@string/activity_editmetadata_title">
+
+        <Button
+            android:id="@+id/editmd_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/editmd_save"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="end"/>
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/editmd_progressIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="invisible" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:id="@+id/editmd_scroll"
+        android:visibility="visible"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="224dp"
+                android:layout_height="224dp"
+                android:id="@+id/editmd_trackCover"
+                android:background="@drawable/cover_round"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:id="@+id/editmd_editlrc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text="@string/editmd_lrcedit"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold"></TextView>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginStart="52dp"
+                    android:layout_marginEnd="52dp"
+                    app:startIconDrawable="@drawable/music_note"
+                    android:hint="@string/editmd_track">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editmd_trackNameInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginStart="52dp"
+                    android:layout_marginEnd="52dp"
+                    app:startIconDrawable="@drawable/navbar_artist_outline"
+                    android:hint="@string/editmd_artist">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editmd_trackArtistInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    android:layout_marginStart="52dp"
+                    android:layout_marginEnd="52dp"
+                    app:startIconDrawable="@drawable/navbar_playlist_outline"
+                    android:hint="@string/editmd_album">
+
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editmd_trackAlbumInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    android:visibility="visible"
+                    android:layout_marginStart="52dp"
+                    android:layout_marginEnd="52dp"
+                    app:startIconDrawable="@drawable/editmd_genre"
+                    android:hint="@string/editmd_genre">
+
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editmd_trackGenreInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    android:layout_marginStart="52dp"
+                    android:layout_marginEnd="52dp"
+                    app:startIconDrawable="@drawable/editmd_lyricist"
+                    android:hint="@string/editmd_lyricist">
+
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editmd_trackLyricistInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    android:layout_marginStart="52dp"
+                    android:layout_marginEnd="52dp"
+                    app:startIconDrawable="@drawable/setup_info"
+                    android:hint="@string/editmd_year">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editmd_trackYearInput"
+                        android:layout_width="match_parent"
+                        android:inputType="number"
+                        android:maxLength="10"
+                        android:layout_height="wrap_content" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginStart="52dp"
+                    app:boxStrokeWidthFocused="2dp"
+                    android:layout_marginEnd="52dp"
+                    app:startIconDrawable="@drawable/editmd_message"
+                    android:hint="@string/editmd_comment"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editmd_trackCommentInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

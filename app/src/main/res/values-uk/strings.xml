@@ -1,0 +1,144 @@
+<resources>
+    <string name="app_name">MishaPlayer</string>
+    <string name="navigation_library">Бібліотека</string>
+    <string name="navigation_artists">Виконавці</string>
+    <string name="navigation_playlists">Плейлісти</string>
+    <string name="navigation_settings">Налаштування</string>
+    <string name="dialog_ok">ОК</string>
+    <string name="dialog_no">НІ</string>
+    <string name="dialog_dismiss">ЗРОЗУМІЛО</string>
+    <string name="dialog_cancel">СКАСУВАТИ</string>
+    <string name="dialog_email">ЕЛ. ПОШТА</string>
+    <string name="permission_requirepermissionTitle">Потрібні дозволи</string>
+    <string name="permission_requirepermission">Щоб продовжити, необхідно надати деякі дозволи.</string>
+    <string name="permission_grant">НАДАТИ</string>
+    <string name="permission_no">НІ</string>
+    <string name="permission_requirepermissionInSettingsTitle">Необхідно надати дозволи!</string>
+    <string name="permission_requirepermissionInSettings">Ви не надали необхідні дозволи для роботи додатку. Будь ласка, надайте нам доступ в налаштуваннях.</string>
+    <string name="permission_gotosettings">НАЛАШТУВАННЯ</string>
+    <string name="permission_cancel">СКАСУВАТИ</string>
+    <string name="setup_hello">Привіт!</string>
+    <string name="setup_description">Mishaplayer - малий та компактний плеєр 🎧 з гарним функціоналом! ⚡\n\n\n\👀 Ми робимо акцент на Material Design 🎨, щоб ваш додаток з музикою був в одному стилі з системою. \n📱Маючи велику кількість функцій ⚙️, вам навіть не потрібні стрімінгові сервіси! 🎶🚫</string>
+    <string name="setup_additional">Ви можете обрати папки для сканування (але не зараз). В майбутньому ми також додамо синхронізацію з хмарою.</string>
+    <string name="setup_permission">Перед початком, нам потрібні деякі дозволи 🎵🔐. Вони необхідні для отримання треків з пристрою.</string>
+    <string name="setup_permissionrequire">Необхідні дозволи!</string>
+    <string name="setup_permissions">Дозволи</string>
+    <string name="setup_appsettings"><u><b>Налаштування додатку</b></u></string>
+    <string name="setup_getstarted">Почати!</string>
+    <string name="setup_privacy"><u><b>Умови та Політика Конфіденційності</b></u></string>
+    <string name="setup_p2d2">Якщо ваша система працює на Android 13 та вище, ми будемо використовувати READ_MEDIA_AUDIO. Інакше, ми використовуємо READ_EXTERNAL_STORAGE.</string>
+    <string name="setup_audio">Аудіо</string>
+    <string name="setup_audio_description">Необхідно для сканування треків зі сховища.</string>
+    <string name="setup_next">Далі</string>
+    <string name="setup_p3_folders_for_scan">Оберіть або видаліть папки для сканування</string>
+    <string name="setup_almostdone">Майже все!</string>
+    <string name="setup_grant_button">Надати</string>
+    <string name="setup_done">Готово!</string>
+    <string name="setup_userdurationscan_title">Введіть тривалість</string>
+    <string name="setup_userdurationscan">Введіть вашу тривалість, починаючи з якої треки будуть скануватися</string>
+    <string name="setup_scan_enternormalvalue">Введіть дійсне значення!</string>
+    <string name="setup_scan_isStringEmpty">Значення не може бути порожнім!</string>
+    <string name="setup_discard">Відмінити</string>
+    <string name="setup_permission_text">Дозволи</string>
+    <string name="setup_scan">Сканування</string>
+    <string name="setup_scan_text">Below you can choose from what duration the tracks will appear in your library! ⏳🎶
+Also, you can click right here to set your own – custom value! ✏️🔢</string>
+    <string name="navbar_nowplaying">Зараз грає</string>
+    <string name="navbar_main">Домашня</string>
+    <string name="navbar_playlist">Плейлісти</string>
+    <string name="navbar_artist">Виконавці</string>
+    <string name="navbar_settings">Налаштування</string>
+    <string name="settings_version">Версія додатку</string>
+    <string name="settings_appearance">Оформлення та зовнішній вигляд</string>
+    <string name="settings_appearance_round_text">Радіус закруглення обкладинок треків</string>
+    <string name="settings_appearance_general">Загальні</string>
+    <string name="settings_appearance_general_language">Мова</string>
+    <string name="settings_versionError">Інформація про версію недоступна.</string>
+    <string name="settings_debug_holdagain">Натисніть знову для відкриття меню відкладки</string>
+    <string name="debug_Title">Меню Відкладки</string>
+    <string name="debug_use_extended_debug_enable">Розширений режим відкладки активовано!</string>
+    <string name="debug_use_extended_debug_disable">Розширений режим відкладки вимкнено!</string>
+    <string name="debug_closeDialog">Закрити</string>
+    <string-array name="debug_menu_items">
+        <item>Перезапустити Актівіті</item>
+        <item>Відкрити стартову сторінку</item>
+        <item>Відкрити налаштування додатку</item>
+        <item>Розширений режим відкладки</item>
+        <item>Протестувати Медіа-Сповіщення</item>
+    </string-array>
+    <string name="music_trackName">Назва</string>
+    <string name="music_albumName">Альбом</string>
+    <string name="music_artistName">Виконавець</string>
+    <string name="np_trackNotPlaying">[Нема пісень]</string>
+    <string name="np_track">Трек</string>
+    <string name="np_artist">Виконавець</string>
+    <string name="np_album">Альбом</string>
+    <string name="np_playpause_desc">Грати</string>
+    <string name="np_devices_thisphone">Цей телефон</string>
+    <string name="np_devices_thistablet">Цей планшет</string>
+    <string name="track_image_desc">Обкладинка пісні</string>
+    <string name="track_info_title">Інформація про пісню</string>
+    <string name="track_adapter_debug_initwith_toast">Біблітеку ініціалізовано з кількістю треків: %d</string>
+    <string name="music_options_menu_title">Додатково</string>
+    <string-array name="music_options_menu">
+        <item>Інформація про пісню</item>
+        <item>Редагувати</item>
+        <item>Видалити назавжди</item>
+    </string-array>
+    <string name="music_edit">Редагувати</string>
+    <string name="music_done">Готово</string>
+    <string name="music_songinfo_location">📂 Розташування: </string>
+    <string name="music_songinfo_title">🎵 Назва: </string>
+    <string name="music_songinfo_artist">🎤 Виконавець: </string>
+    <string name="music_songinfo_album">💿 Альбом: </string>
+    <string name="music_songinfo_duration">⏳ Тривалість: </string>
+    <string name="music_songinfo_size">📏 Розмір: </string>
+    <string name="music_songinfo_bitrate">🎧 Бітрейт: </string>
+    <string name="music_songinfo_megabytes"> МБ</string>
+    <string name="music_songinfo_bps"> BPS</string>
+    <string name="music_songinfo_dialog_title">Інформація про пісню</string>
+    <string name="music_songinfo_delete_successfully">Пісню видалено успішно!</string>
+    <string name="music_songinfo_delete_error">Невдале видалення!</string>
+    <string name="music_songinfo_delete_error_mdget">Неочікуванна помилка під час видалення!</string>
+    <string name="music_songinfo_delete_error_notfound">Файл не знайдено.</string>
+    <string name="music_songinfo_delete_title">Видалити</string>
+    <string name="music_songinfo_delete">Видалити</string>
+    <string name="music_songinfo_delete_cancel">Відмінити</string>
+    <string name="music_songinfo_delete_confirmation">Ви впевнені, що хочете видалити: %1$s?</string>
+    <string name="editmetadata_wrongpath_title">Пісня недосягна!</string>
+    <string name="editmetadata_wrongpath">Отакої... Трек, або ж шлях до нього не знайдено. Будь ласка, перевірте дозволи та спробуйте знову, або ж напишіть нам!</string>
+    <string name="activity_editmetadata_title">Редагування метаданих</string>
+    <string name="editmd_track">Назва</string>
+    <string name="editmd_artist">Виконавець</string>
+    <string name="editmd_album">Альбом</string>
+    <string name="editmd_genre">Жанр</string>
+    <string name="editmd_lyricist">Автор текстів</string>
+    <string name="editmd_year">Рік</string>
+    <string name="editmd_yearofrelese">Рік випуску</string>
+    <string name="editmd_comment">Коментар</string>
+    <string name="editmd_lrcedit">РЕДАГУВАТИ ВЛАШТОВАНУ ЛІРИКУ</string>
+    <string name="editmd_edit_savingtemperror">Під час збереження тимчасового файлу виникла помилка!</string>
+    <string name="editmd_savesuccess">Збережено!</string>
+    <string name="editmd_savesuccesswithmod">Файл оновлено!</string>
+    <string name="editmd_error">Помилка!</string>
+    <string name="editmd_errormessage">Нажаль, виникла помилка :(\n</string>
+    <string name="editmd_saving">Будь ласка, зачекайте...</string>
+    <string name="email_mdedit_errorinit">[РЕДАГУВАННЯ МЕТАДАНИХ, ПОМИЛКА ІНІЦІАЛІЗАЦІЇ]</string>
+    <string name="email_mdedit_errormdsave">[РЕДАГУВАННЯ МЕТАДАНИХ, ПОМИЛКА ПРИ ЗБЕРЕЖЕННІ]</string>
+    <string name="email_setup_error">[ПОМИЛКА ПІД ЧАС ПЕРВІЧНОГО НАЛАШТУВАННЯ]</string>
+    <string name="email_mdedit_error_message">\n\n————————————\n\nБУДЬ ЛАСКА, НИЖЧЕ РОЗКАЖІТЬ НАМ ДОКЛАДНІШЕ, ЯК ВИНИКЛА ЦЯ ПОМИЛКА\n\n</string>
+    <string name="email_mdedit_reason">Причина: </string>
+    <string name="setup_scan_dialog_seconds_hint">Секунди</string>
+    <string name="editmd_save">Зберегти</string>
+    <string name="main_needpermission">Щоб відображати аудіофайли, нам необхідно мати дозвіл на читання аудіофайлів.</string>
+    <string name="main_permissionsgotosettings">Дозвіл на читання аудіофайлів не видано, тому ми не можемо отримати файли з пристрою. Перейдіть в налаштування та надайте дозвіл на читання аудіофайлів.</string>
+    <string name="editmd_failedupdatemd">Не вдалося оновити метадані</string>
+    <string name="editmd_successdupdatemd">Метадані оновлено!</string>
+    <string name="nowplaying_playondevice">ГРАЄ НА</string>
+    <string name="nowplaying_playfrom">ГРАЄ З</string>
+    <string name="nowplaying_emptyqueue">[ЧЕРГА ПОРОЖНЯ]</string>
+    <string name="nowplaying_unknown">&lt;невідомо&gt;</string>
+    <string name="nowplaying_library">Бібліотека</string>
+    <string name="nowplaying_queue_reachedstartlimit">Ви досягли початку черги!</string>
+    <string name="nowplaying_queue_reachedendlimit">Ви досягли кінця черги!</string>
+</resources>

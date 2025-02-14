@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+    android:id="@+id/id_navbar_nowplaying"
+    android:title="@string/navbar_nowplaying"
+    android:icon="@drawable/navbar_play_outline"
+    android:enabled="true"></item>
+
+    <item
+        android:id="@+id/id_navbar_main"
+        android:title="@string/navbar_main"
+        android:icon="@drawable/navbar_home_outline"
+        android:enabled="true"></item>
+
+    <item
+        android:enabled="true"
+        android:id="@+id/id_navbar_artist"
+        android:title="@string/navbar_artist"
+        android:icon="@drawable/navbar_artist_outline">
+    </item>
+<!---
+    <item
+        android:enabled="true"
+        android:icon="@drawable/navbar_playlist_outline"
+        android:id="@+id/id_navbar_playlist"
+        android:title="@string/navbar_playlist"></item>
+        -->
+
+    <item
+        android:id="@+id/id_navbar_settings"
+        android:icon="@drawable/navbar_settings_outline"
+        android:title="@string/navbar_settings"
+        android:enabled="true"></item>
+</menu>
