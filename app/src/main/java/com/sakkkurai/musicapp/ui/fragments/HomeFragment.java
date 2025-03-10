@@ -23,12 +23,13 @@ import android.view.ViewGroup;
 import com.sakkkurai.musicapp.R;
 import com.sakkkurai.musicapp.adapters.TrackAdapter;
 import com.sakkkurai.musicapp.models.Track;
-import com.sakkkurai.musicapp.ui.activities.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+//import me.zhanghai.android.fastscroll.FastScrollerBuilder;
 
 public class HomeFragment extends Fragment {
 
@@ -44,6 +45,10 @@ public class HomeFragment extends Fragment {
         this.trackLibrary = view.findViewById(R.id.home_musicLibrary);
         trackLibrary.setLayoutManager(new LinearLayoutManager(getContext()));
         trackLibrary.setHasFixedSize(true);
+//        FastScrollerBuilder fastScrollerBuilder = new FastScrollerBuilder(trackLibrary);
+//        fastScrollerBuilder.setPadding(4,0,0,0)
+//                        .disableScrollbarAutoHide();
+//        fastScrollerBuilder.build();
         loadAudioFilesAsync();
         return view;
     }
@@ -85,7 +90,7 @@ public class HomeFragment extends Fragment {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private void loadAudioFilesAsync() {
+    public void loadAudioFilesAsync() {
 
         executor.execute(() -> {
             List<Track> trackList = getAllAudioFilesInBackground();
@@ -94,10 +99,12 @@ public class HomeFragment extends Fragment {
                 TrackAdapter trackAdapter = new TrackAdapter(getContext(), new ArrayList<>(trackList), 0, requireActivity());
                 trackLibrary.setAdapter(trackAdapter);
                 SharedPreferences prefs = getActivity().getSharedPreferences("temp", MODE_PRIVATE);
+                if (prefs.contains("LIBRARY_SCROLL_POSITION")) {
                 int scrollPos = prefs.getInt("LIBRARY_SCROLL_POSITION", 0);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.remove("LIBRARY_SCROLL_POSITION");
                 trackLibrary.post(() -> trackLibrary.scrollToPosition(scrollPos));
+                }
             });
         });
     }
@@ -108,7 +115,7 @@ public class HomeFragment extends Fragment {
         String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
         String selection = MediaStore.Audio.Media.DURATION + ">?";
         SharedPreferences sp = requireActivity().getSharedPreferences("userPrefs", MODE_PRIVATE);
-        int scanFrom = sp.getInt("userScanFromDuration", -1) * 1000;
+        int scanFrom = sp.getInt("scanfrom", getResources().getInteger(R.integer.scanfrom)) * 1000;
         String[] selectionArgs = {String.valueOf(scanFrom)};
         String[] projection = {
                 MediaStore.Audio.Media._ID,
@@ -116,6 +123,7 @@ public class HomeFragment extends Fragment {
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.ALBUM,
                 MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.SIZE,
                 MediaStore.Audio.Media.DATA,
         };
 
@@ -123,14 +131,14 @@ public class HomeFragment extends Fragment {
         try (Cursor cursor = contentResolver.query(audioUri, projection, selection, selectionArgs, sortOrder)) {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
+                    String id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
                     String title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
                     String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
                     String album = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM));
                     long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
+                    String size = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE));
                     String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
-
-//                    Bitmap albumArt = getAlbumArt(path);
-                    trackList.add(new Track(title, artist, album, String.valueOf(duration), path/*, albumArt*/));
+                    trackList.add(new Track(id, title, artist, album, String.valueOf(duration), size, path));
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {

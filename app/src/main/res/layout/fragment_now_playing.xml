@@ -45,7 +45,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="@string/nowplaying_library"
+                    android:text="@string/library"
                     android:textColor="?attr/colorOnSurface"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -60,7 +60,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/cover_round"
-            android:src="@drawable/favouriteworstnightmare"
+
             app:layout_constraintBottom_toTopOf="@id/layout_nowplaying_songInfo"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
@@ -80,7 +80,7 @@
                 android:id="@+id/songName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="505"
+                android:text="@string/nowplaying_emptyqueue"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -90,7 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Arctic Monkeys"
+                android:text="@string/nowplaying_unknown"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="14sp" />
 
@@ -99,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Favourite Worst Nightmare"
+                android:text="@string/nowplaying_unknown"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="14sp" />
 
@@ -121,11 +121,11 @@
                 android:id="@+id/nowplaying_playtime_current"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0:00"
+                android:text="-:--"
                 android:textColor="?attr/colorOnSurface" />
 
             <SeekBar
-                android:id="@+id/nowplaying_playtime_bar"
+                android:id="@+id/nowplaying_trackSeekbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
@@ -134,7 +134,7 @@
                 android:id="@+id/nowplaying_playtime_max"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4:13"
+                android:text="-:--"
                 android:textColor="?attr/colorOnSurface" />
 
         </LinearLayout>
@@ -150,11 +150,12 @@
             tools:layout_editor_absoluteX="0dp">
 
             <ImageButton
+
                 android:id="@+id/nowplaying_controls_previous"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="40dp"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="fitCenter"
                 android:src="@drawable/nowplaying_previous" />
 
@@ -162,7 +163,7 @@
                 android:id="@+id/nowplaying_controls_play"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="fitCenter"
                 android:src="@drawable/nowplaying_play" />
 
@@ -171,7 +172,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="40dp"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="fitCenter"
                 android:src="@drawable/nowplaying_next" />
 
@@ -182,11 +183,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:text="I'm going back to 505"
+            android:text="Lyrics"
             android:textColor="?attr/colorOnSurface"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

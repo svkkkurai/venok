@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="cornerradius">16</integer>
+    <integer name="cornerradius_library">36</integer>
+    <integer name="scanfrom">5</integer>
+</resources>

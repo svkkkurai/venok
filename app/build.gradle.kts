@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -9,19 +11,26 @@ android {
     defaultConfig {
         applicationId = "com.sakkkurai.musicapp"
         minSdk = 30
-        //noinspection EditedTargetSdkVersion
         targetSdk = 35
-        versionCode = 28
-        versionName = "2.28"
+        versionCode = 311
+        versionName = "3.1"
     }
+
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isShrinkResources = true
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            isDebuggable = true
+            isMinifyEnabled = false
         }
     }
     compileOptions {
@@ -29,18 +38,25 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
+        buildConfig = true
         viewBinding = true
     }
 }
 
 dependencies {
 
-    implementation("androidx.viewpager2:viewpager2:1.1.0");
-    implementation("androidx.media:media:1.7.0")
-    implementation("androidx.media3:media3-exoplayer:1.2.0")
-    implementation("androidx.media3:media3-session:1.2.0")
-    implementation("com.mpatric:mp3agic:0.9.1")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.room.runtime);
+    annotationProcessor(libs.room.compiler)
+    implementation(libs.viewpager2);
+    implementation(libs.media)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.session)
+    implementation(libs.mp3agic)
+    implementation(libs.gson)
+//    implementation("me.zhanghai.android.fastscroll:library:1.3.0")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

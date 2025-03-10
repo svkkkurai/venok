@@ -1,9 +1,8 @@
 <resources>
-    <string name="app_name">MishaPlayer</string>
-    <string name="navigation_library">Бібліотека</string>
-    <string name="navigation_artists">Виконавці</string>
-    <string name="navigation_playlists">Плейлісти</string>
-    <string name="navigation_settings">Налаштування</string>
+    <string name="library">Бібліотека</string>
+    <string name="artists">Виконавці</string>
+    <string name="playlists">Плейлісти</string>
+    <string name="settings">Налаштування</string>
     <string name="dialog_ok">ОК</string>
     <string name="dialog_no">НІ</string>
     <string name="dialog_dismiss">ЗРОЗУМІЛО</string>
@@ -18,14 +17,14 @@
     <string name="permission_gotosettings">НАЛАШТУВАННЯ</string>
     <string name="permission_cancel">СКАСУВАТИ</string>
     <string name="setup_hello">Привіт!</string>
-    <string name="setup_description">Mishaplayer - малий та компактний плеєр 🎧 з гарним функціоналом! ⚡\n\n\n\👀 Ми робимо акцент на Material Design 🎨, щоб ваш додаток з музикою був в одному стилі з системою. \n📱Маючи велику кількість функцій ⚙️, вам навіть не потрібні стрімінгові сервіси! 🎶🚫</string>
+    <string name="setup_description">Mishaplayer - малий та компактний плеєр 🎧 з гарним функціоналом! ⚡\n👀 Ми робимо акцент на Material Design 🎨, щоб ваш додаток з музикою був в одному стилі з системою. \n📱Маючи велику кількість функцій ⚙️, він робить непотрібними навіть стрімінгові сервіси! 🎶🚫</string>
     <string name="setup_additional">Ви можете обрати папки для сканування (але не зараз). В майбутньому ми також додамо синхронізацію з хмарою.</string>
     <string name="setup_permission">Перед початком, нам потрібні деякі дозволи 🎵🔐. Вони необхідні для отримання треків з пристрою.</string>
     <string name="setup_permissionrequire">Необхідні дозволи!</string>
     <string name="setup_permissions">Дозволи</string>
     <string name="setup_appsettings"><u><b>Налаштування додатку</b></u></string>
     <string name="setup_getstarted">Почати!</string>
-    <string name="setup_privacy"><u><b>Умови та Політика Конфіденційності</b></u></string>
+    <string name="setup_privacy"><u><b>Умови та Конфіденційність</b></u></string>
     <string name="setup_p2d2">Якщо ваша система працює на Android 13 та вище, ми будемо використовувати READ_MEDIA_AUDIO. Інакше, ми використовуємо READ_EXTERNAL_STORAGE.</string>
     <string name="setup_audio">Аудіо</string>
     <string name="setup_audio_description">Необхідно для сканування треків зі сховища.</string>
@@ -41,8 +40,7 @@
     <string name="setup_discard">Відмінити</string>
     <string name="setup_permission_text">Дозволи</string>
     <string name="setup_scan">Сканування</string>
-    <string name="setup_scan_text">Below you can choose from what duration the tracks will appear in your library! ⏳🎶
-Also, you can click right here to set your own – custom value! ✏️🔢</string>
+    <string name="setup_scan_text">Нижче ви можете обрати тривалість, починаючи з якої треки почнуть з\'являтися в Вашій медіатекі! ⏳🎶 Також, Ви можете натиснути сюди та встановити ваше власне значення! ✏️🔢</string>
     <string name="navbar_nowplaying">Зараз грає</string>
     <string name="navbar_main">Домашня</string>
     <string name="navbar_playlist">Плейлісти</string>
@@ -74,8 +72,6 @@ Also, you can click right here to set your own – custom value! ✏️🔢</str
     <string name="np_artist">Виконавець</string>
     <string name="np_album">Альбом</string>
     <string name="np_playpause_desc">Грати</string>
-    <string name="np_devices_thisphone">Цей телефон</string>
-    <string name="np_devices_thistablet">Цей планшет</string>
     <string name="track_image_desc">Обкладинка пісні</string>
     <string name="track_info_title">Інформація про пісню</string>
     <string name="track_adapter_debug_initwith_toast">Біблітеку ініціалізовано з кількістю треків: %d</string>
@@ -138,7 +134,6 @@ Also, you can click right here to set your own – custom value! ✏️🔢</str
     <string name="nowplaying_playfrom">ГРАЄ З</string>
     <string name="nowplaying_emptyqueue">[ЧЕРГА ПОРОЖНЯ]</string>
     <string name="nowplaying_unknown">&lt;невідомо&gt;</string>
-    <string name="nowplaying_library">Бібліотека</string>
     <string name="nowplaying_queue_reachedstartlimit">Ви досягли початку черги!</string>
     <string name="nowplaying_queue_reachedendlimit">Ви досягли кінця черги!</string>
 </resources>

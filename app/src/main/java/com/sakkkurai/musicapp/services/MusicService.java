@@ -1,301 +1,352 @@
 package com.sakkkurai.musicapp.services;
 
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.media3.common.MediaItem;
-import androidx.media3.common.MediaMetadata;
+import androidx.core.graphics.drawable.IconCompat;
+import androidx.media3.common.C;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
-import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.session.CommandButton;
+import androidx.media3.session.DefaultMediaNotificationProvider;
+import androidx.media3.session.MediaNotification;
 import androidx.media3.session.MediaSession;
-import androidx.media3.session.MediaStyleNotificationHelper;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import androidx.annotation.Nullable;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.session.MediaSessionService;
+import androidx.media3.session.MediaStyleNotificationHelper;
+import androidx.media3.session.SessionToken;
+
+import com.google.common.collect.ImmutableList;
 import com.sakkkurai.musicapp.R;
 import com.sakkkurai.musicapp.callback.MetadataManager;
+import com.sakkkurai.musicapp.database.QueueDatabase;
+import com.sakkkurai.musicapp.database.dao.QueueDao;
 import com.sakkkurai.musicapp.models.Track;
 import com.sakkkurai.musicapp.ui.activities.MainActivity;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class MusicService extends Service {
+public class MusicService extends MediaSessionService {
+
     private ExoPlayer mediaPlayer;
-    private MediaItem mediaItem;
     private MediaSession mediaSession;
-    private boolean isPlaying, cancelableNotification;
-    private int pos;
-    private Track trackfrompos;
-    private ArrayList<Track> queuefromsp;
-    private List<MediaItem> mediaItems;
+    private QueueDatabase qDB;
+    private QueueDao queueDao;
+    private SharedPreferences queue_prefs;
+    private SharedPreferences.Editor queue_editor;
+    private final IBinder binder = new MusicServiceBinder();
+    private String TAG = "MusicService";
 
+    public class MusicServiceBinder extends Binder {
+        public MusicService getService() {
+            return MusicService.this;
+        }
+    }
+
+    public SessionToken getSessionToken() {
+        if (mediaSession == null) {
+            Log.w("MusicService", "MediaSession is not initialized yet");
+            return null;
+        }
+        return mediaSession.getToken();
+    }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        super.onBind(intent);
+        return binder;
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     @Override
     public void onCreate() {
         super.onCreate();
-        updateData();
-        createNotificationChannel();
-        String sessionId = UUID.randomUUID().toString();
-        handler.post(broadcastRunnable);
-        }
+        Log.d("MusicService", "Service started!");
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && intent.getAction() != null) {
-            switch (intent.getAction()) {
-                case "ACTION_NEXT":
-                    nextTrack();
-                    break;
-                case "ACTION_PREV":
-                    previousTrack();
-                    break;
-                case "ACTION_PLAY":
-                    play();
-                    break;
-                case "ACTION_PAUSE":
-                    pause();
-                    break;
-                case "ACTION_UPDATE_DATA":
-                    updateData();
-                    break;
-                case "ACTION_REPLAY":
-                    mediaPlayer.seekTo(0);
-                    break;
-                case "ACTION_PLAY_TRACK_LIBRARY":
-                    Intent intent2 = new Intent("com.sakkkurai.musicapp.TRACK_CHANGED");
-                    intent2.setPackage(getPackageName());
-                    sendBroadcast(intent2);
-                    updateData();
-                    play();
-                    break;
-                case "NOWPLAYING_INIT":
-                    NPInit();
-                    break;
-                case "REWIND":
-                    mediaPlayer.seekTo(intent.getIntExtra("SEEK_TO", 0));
-                    break;
-            }
-        }
-        return START_STICKY;
-    }
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
-    private final Runnable broadcastRunnable = new Runnable() {
-        @Override
-        public void run() {
-            NPInit();
-            handler.postDelayed(this, 1000);
-        }
-    };
-
-    private void NPInit() {
-        Intent intent = new Intent("com.sakkkurai.musicapp.TRACK_CURRENTPOS");
-        intent.putExtra("POSITION", mediaPlayer.getCurrentPosition());
-        intent.putExtra("isPlaying", mediaPlayer.isPlaying());
-        intent.setPackage(getPackageName());
-        sendBroadcast(intent);
-    }
-
-    private void updateData() {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-        }
-        Gson gson = new Gson();
-        SharedPreferences prefs = getSharedPreferences("queue", MODE_PRIVATE);
-        if (prefs.contains("queue") && prefs.contains("queuePosition")) {
-            String queue = prefs.getString("queue", "");
-            pos = prefs.getInt("queuePosition", 0);
-            Type type = new TypeToken<ArrayList<Track>>() {}.getType();
-            queuefromsp = gson.fromJson(queue, type);
-            trackfrompos = queuefromsp.get(pos);
-            Uri uri = Uri.parse("file://" + trackfrompos.getAudioPath());
-            mediaItems = new ArrayList<>();
-
-            for (Track track : queuefromsp) {
-                MediaItem item = new MediaItem.Builder()
-                        .setUri(Uri.parse("file://" + track.getAudioPath()))
-                        .build();
-                mediaItems.add(item);
-            }
-            mediaPlayer = new ExoPlayer.Builder(this).build();
-            mediaPlayer.setMediaItems(mediaItems);
-            mediaPlayer.seekTo(pos, 0L);
-            mediaPlayer.prepare();
-            isPlaying = false;
-            String sessionId = UUID.randomUUID().toString();
+        queue_prefs = getSharedPreferences("queue", MODE_PRIVATE);
+        queue_editor = queue_prefs.edit();
+        mediaPlayer = new ExoPlayer.Builder(this).build();
+        new Thread(() -> {
+            long startTime = System.currentTimeMillis();
+            qDB = QueueDatabase.getInstance(this);
+            queueDao = qDB.queueDao();
+            Log.d("MusicService", "DB init took: " + (System.currentTimeMillis() - startTime) + "ms");
+        }).start();
+        if (mediaSession == null) {
             mediaSession = new MediaSession.Builder(this, mediaPlayer)
-                    .setId(sessionId)
+                    .setId(getPackageName() + ".MEDIA_SESSION")
                     .build();
-            mediaPlayer.addListener(new Player.Listener() {
+            Intent i = new Intent(this, MainActivity.class);
+            i.putExtra("OPEN_NOWPLAYING", true);
+            PendingIntent pi = PendingIntent.getActivity(MusicService.this, 12, i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT );
+            mediaSession.setSessionActivity(pi);
+        }
+        setMediaNotificationProvider(new notificationProvider(this, mediaSession));
+        addSession(mediaSession);
 
 
-                @Override
-                public void onPlaybackStateChanged(int state) {
-                    saveTrackPos();
-                    trackChanged();
-                    if (state == Player.STATE_ENDED) {
-                        nextTrack();
-                        saveTrackPos();
-                        trackChanged();
-                    }
-
+        mediaPlayer.addListener(new Player.Listener() {
+            @Override
+            public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+                Player.Listener.super.onMediaItemTransition(mediaItem, reason);
+                if (mediaItem != null) {
+                    queue_editor.putInt("queuePosition", mediaPlayer.getCurrentMediaItemIndex()).apply();
+                    Log.d("MusicService", "Queue saved at position: " + mediaPlayer.getCurrentMediaItemIndex());
                 }
-                @Override
-                public void onIsPlayingChanged(boolean isPlaying) {
-                    saveTrackPos();
-                    trackChanged();
-                }
+            }
+        });
+    }
 
-            });
-            try {
-                startForeground(1, buildNotification());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+    @OptIn(markerClass = UnstableApi.class)
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        if (intent != null){
+            String reason = intent.getStringExtra("reason");
+            Log.d(TAG, "Reason of intent: " + reason);
+            if (reason != null) {
+                if (reason.equals("START_PLAYBACK_ADAPTER")) {
+                    setQueue(true);
+                } else if (reason.equals("START_QUIET")) {
+                    setQueue(false);
+                }
             }
         }
+        return super.onStartCommand(intent, flags, startId);
+
     }
 
-    private void saveTrackPos() {
-        SharedPreferences preferences = this.getSharedPreferences("queue", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("queuePosition", mediaPlayer.getCurrentMediaItemIndex());
-        editor.apply();
-    }
-    private void pause() {
-        isPlaying = false;
-        cancelableNotification = true;
-        mediaPlayer.pause();
+    @Nullable
+    @Override
+    public MediaSession onGetSession(@NonNull MediaSession.ControllerInfo controllerInfo) {
+        return mediaSession;
     }
 
-    private void play() {
-        isPlaying = true;
-        cancelableNotification = false;
-        mediaPlayer.play();
-    }
-
-private void trackChanged() {
-    Intent intent = new Intent("com.sakkkurai.musicapp.TRACK_CHANGED");
-    intent.setPackage(getPackageName());
-    sendBroadcast(intent);
-}
-    private void nextTrack() {
-        if (pos != queuefromsp.size() - 1) {
-            SharedPreferences preferences = this.getSharedPreferences("queue", MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt("queuePosition", pos + 1);
-            editor.apply();
-
-            Intent playIntent = new Intent(this, MusicService.class);
-            playIntent.setAction("ACTION_PLAY_TRACK_LIBRARY");
-            ContextCompat.startForegroundService(this, playIntent);
-            trackChanged();
-            createNotificationChannel();
-
-        } else {
-            Toast.makeText(this, R.string.nowplaying_queue_reachedendlimit, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void previousTrack() {
-        if (pos != queuefromsp.size() - 1) {
-            if (mediaPlayer.getCurrentPosition() < 5000) {
-                SharedPreferences preferences = getSharedPreferences("queue", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putInt("queuePosition", pos - 1);
-                editor.apply();
-                updateData();
-                Intent playIntent = new Intent(this, MusicService.class);
-                playIntent.setAction("ACTION_PLAY_TRACK_LIBRARY");
-                ContextCompat.startForegroundService(this, playIntent);
-                mediaPlayer.seekTo(0);
-                createNotificationChannel();
-            } else {
-                Intent playIntent = new Intent(this, MusicService.class);
-                playIntent.setAction("ACTION_PLAY_TRACK_LIBRARY");
-                ContextCompat.startForegroundService(this, playIntent);
-            }
-        } else {
-            Toast.makeText(this, R.string.nowplaying_queue_reachedendlimit, Toast.LENGTH_SHORT).show();
-        }
-    }
 
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(broadcastRunnable);
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
+        mediaSession.release();
+        mediaPlayer.release();
+    }
+
+    @UnstableApi
+    private void setQueue(boolean autoplay) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+
+            List<Track> trackList = queueDao.getAll();
+            ArrayList<Track> tracks = new ArrayList<>(trackList);
+            List<MediaItem> queue = new ArrayList<>();
+            long startTimeTracks = System.currentTimeMillis();
+            for (Track track : tracks) {
+                queue.add(trackToMediaItem(track));
+            }
+            Log.d("MusicService", "Track queue init took: " + (System.currentTimeMillis() - startTimeTracks) + "ms");
+            long currentTimeMillis = System.currentTimeMillis();
+            mainHandler.post(() -> {
+                mediaPlayer.clearMediaItems();
+                if (!queue.isEmpty()) {
+                    mediaPlayer.setMediaItems(queue, queue_prefs.getInt("queuePosition", 0), C.TIME_UNSET);
+                    Log.d("MusicService", "Set MediaItem's was : " + (System.currentTimeMillis() - currentTimeMillis) + "ms");
+                    mediaPlayer.prepare();
+                    if(autoplay) {
+                        mediaPlayer.play();
+                    }
+                    Log.d("MusicService", "MediaItems count: " + mediaPlayer.getMediaItemCount());
+                }
+            });
+        });
+    }
+    public static MediaItem trackToMediaItem(Track track) {
+
+        return new MediaItem.Builder()
+                .setUri(track.getAudioPath())
+                .setMediaId(track.getAudioPath())
+                .setMediaMetadata(
+                        new MediaMetadata.Builder()
+                                .setTitle(track.getTrackName())
+                                .setArtist(track.getArtistName())
+                                .setAlbumTitle(track.getAlbumName())
+                                .build()
+                )
+                .build();
+    }
+    @UnstableApi
+    private class notificationProvider implements MediaNotification.Provider {
+
+        MusicService service;
+        MediaSession session;
+
+        public notificationProvider(MusicService service, MediaSession session) {
+            this.service = service;
+            this.session = session;
+        }
+
+
+
+        @Override
+        public MediaNotification createNotification(
+                MediaSession mediaSession,
+                ImmutableList<CommandButton> mediaButtonPreferences,
+                MediaNotification.ActionFactory actionFactory,
+                MediaNotification.Provider.Callback onNotificationChangedCallback) {
+
+            MediaStyleNotificationHelper.MediaStyle mediaStyle = new MediaStyleNotificationHelper.MediaStyle(mediaSession);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(MusicService.this, "Music Playback")
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentTitle(mediaSession.getPlayer().getMediaMetadata().title != null
+                            ? mediaSession.getPlayer().getMediaMetadata().title
+                            : getString(R.string.nowplaying_unknown))
+                    .setContentText(mediaSession.getPlayer().getMediaMetadata().artist != null
+                            ? mediaSession.getPlayer().getMediaMetadata().artist
+                            : getString(R.string.nowplaying_unknown))
+                    .setLargeIcon(mediaSession.getPlayer().getMediaMetadata().artworkData != null
+                            ? new MetadataManager(service).getTrackCover(mediaSession.getPlayer().getMediaMetadata().artworkData)
+                            : null)
+                    .setStyle(mediaStyle)
+                    .setOngoing(mediaSession.getPlayer().isPlaying())
+                    .setShowWhen(false)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+            Player player = mediaSession.getPlayer();
+            boolean showPauseButton = player.isPlaying() && player.getPlaybackState() != Player.STATE_ENDED;
+            ImmutableList<CommandButton> mediaButtons = getMediaButtons(mediaSession, player.getAvailableCommands(), showPauseButton);
+
+            int[] compactViewIndices = addNotificationActions(mediaSession, mediaButtons, builder, actionFactory);
+
+            mediaStyle.setShowActionsInCompactView(compactViewIndices);
+
+            Notification notification = builder.build();
+            createNotificationChannel();
+
+            int notificationId = 1;
+            return new MediaNotification(notificationId, notification);
+        }
+
+        private int[] addNotificationActions(
+                MediaSession mediaSession,
+                ImmutableList<CommandButton> mediaButtons,
+                NotificationCompat.Builder builder,
+                MediaNotification.ActionFactory actionFactory) {
+            int[] compactViewIndices = new int[3];
+            Arrays.fill(compactViewIndices, C.INDEX_UNSET);
+
+            for (int i = 0; i < mediaButtons.size(); i++) {
+                CommandButton commandButton = mediaButtons.get(i);
+                NotificationCompat.Action action;
+
+                if (commandButton.sessionCommand != null) {
+                    action = actionFactory.createCustomActionFromCustomCommandButton(mediaSession, commandButton);
+                } else {
+                    action = actionFactory.createMediaAction(
+                            mediaSession,
+                            IconCompat.createWithResource(MusicService.this, commandButton.iconResId),
+                            commandButton.displayName,
+                            commandButton.playerCommand);
+                }
+
+                builder.addAction(action);
+                if (commandButton.playerCommand == Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM) {
+                    compactViewIndices[0] = i;
+                } else if (commandButton.playerCommand == Player.COMMAND_PLAY_PAUSE) {
+                    compactViewIndices[1] = i;
+                } else if (commandButton.playerCommand == Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM) {
+                    compactViewIndices[2] = i;
+                }
+            }
+
+            for (int i = 0; i < compactViewIndices.length; i++) {
+                if (compactViewIndices[i] == C.INDEX_UNSET) {
+                    compactViewIndices = Arrays.copyOf(compactViewIndices, i);
+                    break;
+                }
+            }
+
+            return compactViewIndices;
+        }
+
+        private ImmutableList<CommandButton> getMediaButtons(
+                MediaSession session,
+                Player.Commands playerCommands,
+                boolean showPauseButton) {
+            ImmutableList.Builder<CommandButton> commandButtons = new ImmutableList.Builder<>();
+
+            if (playerCommands.containsAny(
+                    Player.COMMAND_SEEK_TO_PREVIOUS, Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)) {
+                commandButtons.add(
+                        new CommandButton.Builder(CommandButton.ICON_PREVIOUS)
+                                .setPlayerCommand(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+                                .setDisplayName(MusicService.this.getString(androidx.media3.session.R.string.media3_controls_seek_to_previous_description))
+                                .build());
+            }
+
+            if (playerCommands.contains(Player.COMMAND_PLAY_PAUSE)) {
+                if (showPauseButton) {
+                    commandButtons.add(
+                            new CommandButton.Builder(CommandButton.ICON_PAUSE)
+                                    .setPlayerCommand(Player.COMMAND_PLAY_PAUSE)
+                                    .setDisplayName(MusicService.this.getString(androidx.media3.session.R.string.media3_controls_pause_description))
+                                    .build());
+                } else {
+                    commandButtons.add(
+                            new CommandButton.Builder(CommandButton.ICON_PLAY)
+                                    .setPlayerCommand(Player.COMMAND_PLAY_PAUSE)
+                                    .setDisplayName(MusicService.this.getString(androidx.media3.session.R.string.media3_controls_play_description))
+                                    .build());
+                }
+            }
+
+            if (playerCommands.containsAny(
+                    Player.COMMAND_SEEK_TO_NEXT, Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)) {
+                commandButtons.add(
+                        new CommandButton.Builder(CommandButton.ICON_NEXT)
+                                .setPlayerCommand(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+                                .setDisplayName(MusicService.this.getString(androidx.media3.session.R.string.media3_controls_seek_to_next_description))
+                                .build());
+            }
+
+            return commandButtons.build();
+        }
+
+        @Override
+        public boolean handleCustomCommand(MediaSession session, String action, Bundle extras) {
+            return false;
+        }
+
+        private void createNotificationChannel() {
+            NotificationChannel channel = new NotificationChannel(
+                    "Music Playback",
+                    "Music Channel",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
         }
     }
-
-
-    private void createNotificationChannel() {
-        NotificationChannel channel = new NotificationChannel(
-                "Music Playback",
-                "Music Channel",
-                NotificationManager.IMPORTANCE_LOW
-        );
-        NotificationManager manager = getSystemService(NotificationManager.class);
-        manager.createNotificationChannel(channel);
-    }
-
-    @OptIn(markerClass = UnstableApi.class)
-    private Notification buildNotification() throws IOException {
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-        Notification notification = new NotificationCompat.Builder(this, "Music Playback")
-                .setContentTitle("Track Title")
-                .setContentText("Artist Name")
-                .setSmallIcon(R.drawable.music_note)
-                .setContentIntent(pendingIntent)
-                .setOngoing(cancelableNotification)
-                .setStyle(new MediaStyleNotificationHelper.MediaStyle(mediaSession))
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setLargeIcon(trackfrompos.getBitmap())
-                .setContentTitle(trackfrompos.getTrackName())
-                .setContentText(trackfrompos.getArtistName())
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .build();
-        PendingIntent prevIntent = PendingIntent.getService(
-                this, 0, new Intent(this, MusicService.class).setAction("ACTION_PREV"),
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-        PendingIntent nextIntent = PendingIntent.getService(
-                this, 0, new Intent(this, MusicService.class).setAction("ACTION_NEXT"),
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-        return notification;
 }
-}
-

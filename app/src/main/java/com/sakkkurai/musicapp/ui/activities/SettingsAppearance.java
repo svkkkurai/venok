@@ -37,7 +37,7 @@ public class SettingsAppearance extends AppCompatActivity {
         np_round_sb = findViewById(R.id.appearance_np_cornerradius_seekbar);
 
         SharedPreferences prefs = getSharedPreferences("userPrefs", MODE_PRIVATE);
-        int np_savedround = prefs.getInt("appearance_nowplaying_trackCoverRound", 0);
+        int np_savedround = prefs.getInt("cornerradius", getResources().getInteger(R.integer.cornerradius));
 
         np_round_sb.setProgress(np_savedround);
         np_current_round.setText(String.valueOf(np_savedround));
@@ -59,7 +59,7 @@ public class SettingsAppearance extends AppCompatActivity {
                 // Save round
                 SharedPreferences sp = getSharedPreferences("userPrefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putInt("appearance_nowplaying_trackCoverRound", np_round_sb.getProgress());
+                editor.putInt("cornerradius", np_round_sb.getProgress());
                 editor.apply();
 
                 Log.d("Prefs", "Saved! Cover corner radius " + String.valueOf(np_round_sb.getProgress()));

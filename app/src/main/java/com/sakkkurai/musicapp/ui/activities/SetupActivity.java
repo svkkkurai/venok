@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.sakkkurai.musicapp.R;
 import com.sakkkurai.musicapp.adapters.SetupPagerAdapter;
@@ -47,34 +48,36 @@ public class SetupActivity extends AppCompatActivity {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.setup_userdurationscan_title);
         builder.setCancelable(true);
-        final EditText duration_input = new EditText(this);
-        duration_input.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        TextInputEditText duration_input = dialogView.findViewById(R.id.number_input);
+
         builder.setView(dialogView);
-        TextInputLayout inputData = dialogView.findViewById(R.id.setup_scanfrom_dialog_input);
         builder.setMessage(R.string.setup_userdurationscan);
-        builder.setNegativeButton(R.string.setup_discard, ((dialogInterface, i) -> {
-            dialogInterface.cancel();
-        }));
-        builder.setPositiveButton("OK", ((dialogInterface, i) -> {
-            String value = duration_input.getText().toString();
-            if (!value.isEmpty()) {
-                try {
-                    int duration = Integer.parseInt(value);
-                    SharedPreferences sp = getSharedPreferences("userPrefs", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putInt("userScanFromDuration", duration);
-                    editor.apply();
-                    adapter.setSeekbarProgress(duration);
-                } catch (NumberFormatException e) {
-                    Toast.makeText(this, R.string.setup_scan_enternormalvalue, Toast.LENGTH_SHORT).show();
+        builder.setNegativeButton(R.string.setup_discard, (dialogInterface, i) -> dialogInterface.cancel());
+
+        builder.setPositiveButton(R.string.dialog_ok, (dialogInterface, i) -> {
+            if (duration_input != null) {
+                String value = duration_input.getText().toString().trim();
+                if (!value.isEmpty()) {
+                    try {
+                        int duration = Integer.parseInt(value);
+                        SharedPreferences sp = getSharedPreferences("userPrefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putInt("userScanFromDuration", duration);
+                        editor.apply();
+                        adapter.setSeekbarProgress(duration);
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, R.string.setup_scan_enternormalvalue, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(this, R.string.setup_scan_isStringEmpty, Toast.LENGTH_SHORT).show();
                 }
             }
-            else {
-                Toast.makeText(this, R.string.setup_scan_isStringEmpty, Toast.LENGTH_SHORT).show();
-            }
-        }));
+        });
+
         builder.show();
-        }
+    }
+
 
 
     public boolean isPermissionsGranted() {
@@ -92,9 +95,6 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     public void endSetup() {
-        SharedPreferences sp = getSharedPreferences("userPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor spedit = sp.edit();
-        spedit.putInt("userScanFromDuration", adapter.getSeekbarValue());
         SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("setup_completed", true);
@@ -143,7 +143,6 @@ public class SetupActivity extends AppCompatActivity {
                 .setTitle(R.string.permission_requirepermissionInSettingsTitle)
                 .setMessage(R.string.permission_requirepermissionInSettings)
                 .setPositiveButton(R.string.permission_gotosettings, (dialogInterface, i) -> {
-                    // Открываем настройки приложения
                     Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     intent.setData(Uri.parse("package:" + SetupActivity.this.getPackageName()));
                     SetupActivity.this.startActivity(intent);

@@ -3,26 +3,55 @@ package com.sakkkurai.musicapp.models;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.util.Log;
+
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 import java.io.File;
 import java.io.IOException;
 
+@Entity(tableName = "queue")
 public class Track {
+    @PrimaryKey(autoGenerate = true)
+    public int id;
+    private String songId;
     private String trackName;
     private String artistName;
     private String albumName;
     private String audioPath;
     private String duration;
+    @Ignore
+    private int durationMs;
+    private String size;
 
+public Track() {}
 
-
-    public Track(String trackName, String artistName, String albumName, String duration, String audioPath) {
+    public Track(String songId, String trackName, String artistName, String albumName, String duration, String size, String audioPath) {
         this.trackName = trackName;
         this.artistName = artistName;
         this.albumName = albumName;
         this.duration = duration;
         this.audioPath = audioPath;
+        this.songId = songId;
+        this.size = size;
+    }
+
+
+    public String getSongId() {
+    return songId;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public void setSongId(String songId) {
+        this.songId = songId;
     }
 
     public String getTrackName() {
@@ -44,7 +73,7 @@ public class Track {
         return size;
     }
 
-
+    @Ignore
     public int getBitrate() throws IOException {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
@@ -59,10 +88,11 @@ public class Track {
         }
     }
 
-    public int getDurationMs() {
-        return Integer.parseInt(duration);
+    public String  getDuration() {
+        return duration;
     }
 
+    @Ignore
     private String getFileSizeInMB(String path) {
         File file = new File(path);
         if (file.exists()) {
@@ -73,6 +103,7 @@ public class Track {
         }
     }
 
+    @Ignore
     public Bitmap getBitmap() throws IOException {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
@@ -89,11 +120,11 @@ public class Track {
         return null;
     }
 
-
-    public String getDuration()
+    @Ignore
+    public String getFormattedDuration()
     {
         try {
-            long totalSeconds = Long.parseLong(duration) / 1000; // Предполагаем, что duration хранится в секундах
+            long totalSeconds = Long.parseLong(duration) / 1000;
             long minutes = totalSeconds / 60;
             long seconds = totalSeconds % 60;
             long hours = minutes / 60;

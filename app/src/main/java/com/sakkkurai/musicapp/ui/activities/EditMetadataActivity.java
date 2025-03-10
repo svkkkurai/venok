@@ -1,6 +1,5 @@
 package com.sakkkurai.musicapp.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -22,7 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,7 +28,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -54,13 +51,12 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.sakkkurai.musicapp.R;
-import com.sakkkurai.musicapp.callback.EmailSender;
 import com.sakkkurai.musicapp.callback.MetadataManager;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,7 +70,6 @@ import java.util.concurrent.Executors;
 public class EditMetadataActivity extends AppCompatActivity {
 
     private TextInputEditText title, artist, album, comment, year, genre, lyricist;
-    private EmailSender eSend;
     private ShapeableImageView cover;
     private LinearProgressIndicator progressIndicator;
     private ScrollView scrollView;
@@ -92,7 +87,6 @@ public class EditMetadataActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_metadata);
-        eSend = new EmailSender(this);
         this.path = getIntent().getStringExtra("PATH");
         this.tArt = findViewById(R.id.editmd_trackCover);
         this.title = findViewById(R.id.editmd_trackNameInput);
@@ -238,10 +232,6 @@ public class EditMetadataActivity extends AppCompatActivity {
                         dialog.dismiss();
                         finish();
                     })
-                    .setNegativeButton(R.string.dialog_email, (dialog, which) -> {
-                        eSend.sendEmail(getResources().getString(R.string.email_mdedit_errorinit) + "\n" + getAppInfo(this), getDeviceInfo() + getResources().getString(R.string.email_mdedit_reason) + " " + "EMPTY_INTENT" + getResources().getString(R.string.email_mdedit_error_message), new String[]{"sakurai.pnwz@gmail.com"});
-                        finish();
-                    })
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
@@ -267,7 +257,7 @@ public class EditMetadataActivity extends AppCompatActivity {
         try {
             startIntentSenderForResult(pendingIntent.getIntentSender(), 1488, null, 0, 0, 0);
         } catch (IntentSender.SendIntentException e) {
-            throw new RuntimeException(e);
+            FirebaseCrashlytics.getInstance().recordException(e);
         }
     }
 
@@ -323,14 +313,11 @@ public class EditMetadataActivity extends AppCompatActivity {
                 View rootView = findViewById(R.id.editmd_main);
                 Snackbar.make(rootView, R.string.editmd_savesuccess, Snackbar.LENGTH_SHORT).show();
             } catch (Exception e) {
-                e.printStackTrace();
+                FirebaseCrashlytics.getInstance().recordException(e);
                 new MaterialAlertDialogBuilder(this)
                         .setTitle(this.getString(R.string.editmd_error))
                         .setMessage(this.getString(R.string.editmd_errormessage) + e.getMessage())
                         .setPositiveButton(R.string.dialog_ok, (dialog, which) -> dialog.dismiss())
-                        .setNegativeButton(R.string.dialog_email, (dialog, which) -> {
-                            eSend.sendEmail(getResources().getString(R.string.email_mdedit_errormdsave) + "\n" + getAppInfo(this), getDeviceInfo() + getResources().getString(R.string.email_mdedit_reason) + "MD_SAVE_FATAL\n" + e.getMessage() + getResources().getString(R.string.email_mdedit_error_message), new String[]{"sakurai.pnwz@gmail.com"});
-                        })
                         .show();
             }
         }
@@ -534,7 +521,7 @@ public class EditMetadataActivity extends AppCompatActivity {
             return appInfo.toString();
 
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            FirebaseCrashlytics.getInstance().recordException(e);
             return "Error fetching app info.";
         }
     }

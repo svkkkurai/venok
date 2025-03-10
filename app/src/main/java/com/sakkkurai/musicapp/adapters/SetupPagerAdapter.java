@@ -133,7 +133,8 @@ public class SetupPagerAdapter extends RecyclerView.Adapter<SetupPagerAdapter.Vi
 
 
             SharedPreferences sp = activity.getSharedPreferences("userPrefs", MODE_PRIVATE);
-            int progress = sp.getInt("userScanFromDuration", 0);
+            SharedPreferences.Editor editor = sp.edit();
+            int progress = sp.getInt("scanfrom", activity.getResources().getInteger(R.integer.scanfrom));
                 if (seekbar != null && seekbarText != null) {
                     seekbar.setProgress(progress);
                     seekbarText.setText(String.valueOf(progress));
@@ -142,16 +143,17 @@ public class SetupPagerAdapter extends RecyclerView.Adapter<SetupPagerAdapter.Vi
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                             seekbarText.setText(String.valueOf(progress));
-                            SharedPreferences.Editor editor = sp.edit();
-                            editor.putInt("userScanFromDuration", seekbar.getProgress());
-                            editor.apply();
+
                         }
 
                         @Override
                         public void onStartTrackingTouch(SeekBar seekBar) { }
 
                         @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) { }
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                            editor.putInt("scanfrom", seekbar.getProgress());
+                            editor.apply();
+                        }
                     });
                 }
             }
@@ -203,11 +205,7 @@ public class SetupPagerAdapter extends RecyclerView.Adapter<SetupPagerAdapter.Vi
             animatorSet.play(scaleDownX).with(scaleDownY);
             animatorSet.play(scaleUpX).with(scaleUpY).after(scaleDownX);
             animatorSet.start();
-
-            Log.d("s", String.valueOf(activity.isPermissionsGranted()));
-
             if (activity.isPermissionsGranted()) {
-                Log.d("s", String.valueOf(activity.isPermissionsGranted()));
                 layout.setVisibility(activity.isPermissionsGranted() ? View.VISIBLE : View.GONE);
                 layout.setAlpha(0f);
                 ObjectAnimator fadeIn = ObjectAnimator.ofFloat(layout, "alpha", 0f, 1f);

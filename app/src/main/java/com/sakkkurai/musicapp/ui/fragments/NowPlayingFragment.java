@@ -2,20 +2,29 @@ package com.sakkkurai.musicapp.ui.fragments;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
-import androidx.core.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
+import androidx.media3.common.C;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.Player;
+import androidx.media3.session.MediaController;
 
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,183 +32,74 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.imageview.ShapeableImageView;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.sakkkurai.musicapp.R;
 import com.sakkkurai.musicapp.callback.MetadataManager;
-import com.sakkkurai.musicapp.models.Track;
 import com.sakkkurai.musicapp.services.MusicService;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-
 public class NowPlayingFragment extends Fragment {
+    private String ACTION_NEXT = "ACTION_NEXT";
+    private String ACTION_PREVIOUS = "ACTION_PREVIOUS";
+    private String ACTION_PAUSE = "ACTION_PAUSE";
+    private String ACTION_PLAY = "ACTION_PLAY";
+    private TextView songNameTextView, songArtistTextView, songAlbumTextView, songDurationCurrentTextView, songDurationMaxTextView;
+    private ImageButton playImageButton, nextImageButton, previousImageButton;
+    private boolean isPlaying = false;
+    private SharedPreferences preferences;
+    private SeekBar songDurationSeekbar;
 
-    private TextView songName, songArtist, songAlbum, playingFrom, playingFromTitle, seekbar_currentTime, seekbar_maxTime, trackLyrics;
-    private ShapeableImageView songCover;
-    private ImageButton pause, next, previous;
-    int np_savedround;
-    private SeekBar seekBar;
-    private boolean isPlaying;
-    private Track trackfrompos;
-    private int pos;
-    private long trackDurationCurrentPos;
-    private ArrayList<Track> queuefromsp;
-    private Drawable playDrawable;
-    private Drawable pauseDrawable;
-
-
-
-    private final BroadcastReceiver trackChangeReceiver = new BroadcastReceiver() {
+    private MediaController mediaController;
+    private ListenableFuture<MediaController> listenableFuture;
+    private final String TAG = "NowPlayingFragment";
+    private MusicService musicService;
+    private boolean isBound = false;
+    private ShapeableImageView songArtworkShapeableImageView;
+    private int cornerradius;
+    private ServiceConnection connection = new ServiceConnection() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            updateData();
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicServiceBinder binder = (MusicService.MusicServiceBinder) service;
+            musicService = binder.getService();
+            isBound = true;
+            createMediaController();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+            musicService = null;
         }
     };
 
-
-    private final BroadcastReceiver trackDurationCurrentPosition = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            trackDurationCurrentPos = intent.getLongExtra("POSITION", 0);
-            seekBar.setProgress((int) trackDurationCurrentPos);
-            if (intent.hasExtra("isPlaying")) {
-                isPlaying = intent.getBooleanExtra("isPlaying", false);
-                if (isPlaying && pause.getDrawable() != pauseDrawable) {
-                    pause.setImageDrawable(pauseDrawable);
-                } else if (!isPlaying && pause.getDrawable() != playDrawable) {
-                    pause.setImageDrawable(playDrawable);
-                }
-            }
-        }
-    };
-
-
-
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_now_playing, container, false);
+        bindService();
+        songNameTextView = view.findViewById(R.id.songName);
+        songArtistTextView = view.findViewById(R.id.songArtist);
+        songAlbumTextView = view.findViewById(R.id.songAlbum);
+        playImageButton = view.findViewById(R.id.nowplaying_controls_play);
+        nextImageButton = view.findViewById(R.id.nowplaying_controls_next);
+        previousImageButton = view.findViewById(R.id.nowplaying_controls_previous);
+        songDurationCurrentTextView = view.findViewById(R.id.nowplaying_playtime_current);
+        songDurationMaxTextView = view.findViewById(R.id.nowplaying_playtime_max);
+        songArtworkShapeableImageView = view.findViewById(R.id.nowplaying_trackcover);
+        songDurationSeekbar = view.findViewById(R.id.nowplaying_trackSeekbar);
+        preferences = requireContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
+        cornerradius = preferences.getInt("cornerradius", R.integer.cornerradius);
 
-        View v = inflater.inflate(R.layout.fragment_now_playing, container, false);
-        playDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.nowplaying_play);
-        pauseDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.nowplaying_pause);
-        songCover = v.findViewById(R.id.nowplaying_trackcover);
-        songName = v.findViewById(R.id.songName);
-        songArtist = v.findViewById(R.id.songArtist);
-        trackLyrics = v.findViewById(R.id.nowplaying_trackLyrics);
-        next = v.findViewById(R.id.nowplaying_controls_next);
-        pause = v.findViewById(R.id.nowplaying_controls_play);
-        previous = v.findViewById(R.id.nowplaying_controls_previous);
-        songAlbum = v.findViewById(R.id.songAlbum);
-        playingFrom = v.findViewById(R.id.nowplaying_playingfrom);
-        playingFromTitle = v.findViewById(R.id.nowplaying_playingfrom_title);
-        seekbar_maxTime = v.findViewById(R.id.nowplaying_playtime_max);
-        seekbar_currentTime = v.findViewById(R.id.nowplaying_playtime_current);
-        seekBar = v.findViewById(R.id.nowplaying_playtime_bar);
-
-        SharedPreferences prefs = requireActivity().getSharedPreferences("userPrefs", Context.MODE_PRIVATE);
-        np_savedround = prefs.getInt("appearance_nowplaying_trackCoverRound", 16);
-
-
-        Intent updateData = new Intent(getActivity(), MusicService.class);
-        updateData.setAction("NOWPLAYING_INIT");
-        ContextCompat.startForegroundService(getActivity(), updateData);
-
-        IntentFilter trackDur = new IntentFilter("com.sakkkurai.musicapp.TRACK_CURRENTPOS");
-        ContextCompat.registerReceiver(requireActivity(), trackDurationCurrentPosition, trackDur, ContextCompat.RECEIVER_EXPORTED);
-
-        IntentFilter trackChanged = new IntentFilter("com.sakkkurai.musicapp.TRACK_CHANGED");
-        ContextCompat.registerReceiver(requireActivity(), trackChangeReceiver, trackChanged, ContextCompat.RECEIVER_EXPORTED);
-
-
-        updateData();
-
-
-        pause.setOnClickListener(v1 -> {
-            if (isPlaying) {
-                Intent playIntent = new Intent(getActivity(), MusicService.class);
-                playIntent.setAction("ACTION_PAUSE");
-                ContextCompat.startForegroundService(getActivity(), playIntent);
-                pause.setImageResource(R.drawable.nowplaying_play);
-            } else {
-                Intent playIntent = new Intent(getActivity(), MusicService.class);
-                playIntent.setAction("ACTION_PLAY");
-                ContextCompat.startForegroundService(getActivity(), playIntent);
-                pause.setImageResource(R.drawable.nowplaying_pause);
-            }
-            isPlaying = !isPlaying;
-            updateData();
-        });
-
-        next.setOnClickListener(v1 -> {
-            if (pos != queuefromsp.size() -1) {
-                SharedPreferences preferences = getActivity().getSharedPreferences("queue", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putInt("queuePosition", pos + 1);
-                editor.apply();
-                updateData();
-                Intent playIntent = new Intent(getActivity(), MusicService.class);
-                playIntent.setAction("ACTION_PLAY_TRACK_LIBRARY");
-                ContextCompat.startForegroundService(getActivity(), playIntent);
-                pause.setImageResource(R.drawable.nowplaying_pause);
-                seekBar.setProgress(0);
-            } else {
-                Toast.makeText(getActivity(), R.string.nowplaying_queue_reachedendlimit, Toast.LENGTH_SHORT).show();
-                pause.setImageResource(R.drawable.nowplaying_play);
-
-            }
-        });
-
-
-        previous.setOnClickListener(v1 -> {
-            if (pos != 0) {
-                if (seekBar.getProgress() < 2000) {
-                    SharedPreferences preferences = getActivity().getSharedPreferences("queue", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putInt("queuePosition", pos - 1);
-                    editor.apply();
-                    updateData();
-                    Intent playIntent = new Intent(getActivity(), MusicService.class);
-                    playIntent.setAction("ACTION_PLAY_TRACK_LIBRARY");
-                    ContextCompat.startForegroundService(getActivity(), playIntent);
-                    pause.setImageResource(R.drawable.nowplaying_pause);
-                    seekBar.setProgress(0);
-                } else {
-                    Intent playIntent = new Intent(getActivity(), MusicService.class);
-                    playIntent.setAction("ACTION_PLAY_TRACK_LIBRARY");
-                    ContextCompat.startForegroundService(getActivity(), playIntent);
-                }
-
-            } else {
-                Toast.makeText(getActivity(), R.string.nowplaying_queue_reachedstartlimit, Toast.LENGTH_SHORT).show();
-                pause.setImageResource(R.drawable.nowplaying_play);
-            }
-
-        });
-
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        // Button listeners
+        playImageButton.setOnClickListener(v -> handleControls(ACTION_PLAY));
+        nextImageButton.setOnClickListener(v -> handleControls(ACTION_NEXT));
+        previousImageButton.setOnClickListener(v -> handleControls(ACTION_PREVIOUS));
+        songDurationSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                long totalSeconds = progress / 1000;
-                long minutes = totalSeconds / 60;
-                long seconds = totalSeconds % 60;
-                long hours = minutes / 60;
-                minutes = minutes % 60;
-
-                if (totalSeconds < 600) { // < 10 min
-                    seekbar_currentTime.setText(String.format("%d:%02d", minutes, seconds));
-                } else if (totalSeconds < 3600) { // >10 min and <60 min
-                    seekbar_currentTime.setText(String.format("%02d:%02d", minutes, seconds));
-                } else if (totalSeconds < 36000) { // >60 min and <600 min
-                    seekbar_currentTime.setText(String.format("%d:%02d:%02d", hours, minutes, seconds));
-                } else { // >600 min and <1440 min
-                    seekbar_currentTime.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-                }
             }
 
             @Override
@@ -209,61 +109,151 @@ public class NowPlayingFragment extends Fragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Intent playIntent = new Intent(getActivity(), MusicService.class);
-                playIntent.setAction("REWIND");
-                playIntent.putExtra("SEEK_TO", seekBar.getProgress());
-                ContextCompat.startForegroundService(getActivity(), playIntent);
+                mediaController.seekTo(songDurationSeekbar.getProgress());
             }
         });
-        return v;
+        return view;
     }
 
+    private void createMediaController(){
+        listenableFuture = new MediaController.Builder(requireContext(), musicService.getSessionToken()).buildAsync();
+        listenableFuture.addListener(() -> {
+            try {
+                mediaController = listenableFuture.get();
+                Log.d(TAG, "MediaController initialized successfully");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to initialize MediaController", e);
+            }
+        }, MoreExecutors.directExecutor());
+        if (mediaController == null){
+            Log.d(TAG, "MediaController is null!");
+            return;
+        }
+        mediaController.addListener(new Player.Listener() {
+            @Override
+            public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+                Player.Listener.super.onMediaItemTransition(mediaItem, reason);
+                updateCurrentPlayingPosition();
+                updateUI();
+            }
 
-    public void updateData() {
-        trackLyrics.setVisibility(View.GONE);
-        SharedPreferences preferences = getActivity().getSharedPreferences("queue", MODE_PRIVATE);
-        Gson gson = new Gson();
+            @Override
+            public void onMediaMetadataChanged(MediaMetadata mediaMetadata) {
+                Player.Listener.super.onMediaMetadataChanged(mediaMetadata);
+                updateCurrentPlayingPosition();
+                updateUI();
+            }
+
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                Player.Listener.super.onPlaybackStateChanged(playbackState);
+                updateUI();
+                updateCurrentPlayingPosition();
+                Log.d(TAG, "CurrentPos: " + mediaController.getCurrentPosition());
+            }
+
+            @Override
+            public void onIsPlayingChanged(boolean isPlaying) {
+                Player.Listener.super.onIsPlayingChanged(isPlaying);
+                updateUI();
+                updateCurrentPlayingPosition();
+            }
+        });
+        Handler handler = new Handler(Looper.getMainLooper());
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                updateCurrentPlayingPosition();
+                handler.postDelayed(this, 250);
+            }
+        };
+        handler.post(runnable);
+        updateUI();
+
+    }
+
+    private void updateCurrentPlayingPosition() {
+        songDurationSeekbar.setProgress((int) mediaController.getCurrentPosition());
+        songDurationCurrentTextView.setText(new MetadataManager(getActivity()).getFormattedDuration(mediaController.getCurrentPosition()));
+    }
+    private void updateUI(){
+        isPlaying = mediaController.isPlaying();
         if (isPlaying) {
-            pause.setImageResource(R.drawable.nowplaying_pause);
+            playImageButton.setImageResource(R.drawable.nowplaying_pause);
         }
-        else {
-            pause.setImageResource(R.drawable.nowplaying_play);
+        if (!isPlaying) {
+            playImageButton.setImageResource(R.drawable.nowplaying_play);
         }
-        if (preferences.contains("queue") && preferences.contains("queuePosition")) {
-            String playReason = preferences.getString("playReason", "");
-            String queue = preferences.getString("queue", "");
-            pos = preferences.getInt("queuePosition", 0);
-            Type type = new TypeToken<ArrayList<Track>>() {}.getType();
-            queuefromsp = gson.fromJson(queue, type);
-            trackfrompos = queuefromsp.get(pos);
-            MetadataManager mdm = new MetadataManager(getActivity());
-            songName.setText(trackfrompos.getTrackName());
-            songArtist.setText(trackfrompos.getArtistName());
-            songAlbum.setText(trackfrompos.getAlbumName());
-            seekBar.setMax(trackfrompos.getDurationMs());
-            seekbar_maxTime.setText(trackfrompos.getDuration());
-            Bitmap songImage = mdm.getTrackCover(trackfrompos.getAudioPath());
-            if (songImage != null) {
-                RoundedBitmapDrawable rbd = RoundedBitmapDrawableFactory.create(getResources(), songImage);
-                rbd.setCornerRadius(np_savedround);
-                songCover.setImageDrawable(rbd);
+        if (isAdded()) {
+            MetadataManager metadataManager = new MetadataManager(getActivity());
+            long songDurationMs = mediaController.getDuration();
+            songDurationMaxTextView.setText(metadataManager.getFormattedDuration(songDurationMs));
+            songDurationSeekbar.setMax((int) songDurationMs);
+        }
+
+
+        songNameTextView.setText(mediaController.getMediaMetadata().title);
+        songArtistTextView.setText(mediaController.getMediaMetadata().artist);
+        songAlbumTextView.setText(mediaController.getMediaMetadata().albumTitle);
+        byte[] artworkData = mediaController.getMediaMetadata().artworkData;
+
+        if (artworkData != null && artworkData.length > 0) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(artworkData, 0, artworkData.length);
+            if (bitmap != null) {
+                if (isAdded()) {
+                    RoundedBitmapDrawable rbd = RoundedBitmapDrawableFactory.create(requireContext().getResources(), bitmap);
+                    rbd.setCornerRadius(cornerradius);
+                    songArtworkShapeableImageView.setImageDrawable(rbd);
+                    Log.d(TAG, "updateUI: Album art set successfully");
+                }
             } else {
-                songCover.setImageDrawable(null);
+                songArtworkShapeableImageView.setImageDrawable(null);
+                Log.w(TAG, "updateUI: Failed to decode album art bitmap");
             }
         } else {
-            songCover.setImageDrawable(null);
-            songName.setText(R.string.nowplaying_emptyqueue);
-            songArtist.setText(R.string.nowplaying_unknown);
-            songAlbum.setText(R.string.nowplaying_unknown);
-            playingFromTitle.setVisibility(View.INVISIBLE);
-            playingFrom.setVisibility(View.INVISIBLE);
+            songArtworkShapeableImageView.setImageDrawable(null);
+            Log.d(TAG, "updateUI: No album art available");
+        }
+        Log.d(TAG, "isPlaying: " + isPlaying + "\nTitle: " + songNameTextView.getText() + ", Artist: " + songArtistTextView.getText() +
+                ", Album: " + songAlbumTextView.getText());
+    }
+    private void bindService(){
+        Log.d(TAG, "bindService: Attempting to bind to MusicService");
+        Intent intent = new Intent(requireContext(), MusicService.class);
+        intent.putExtra("reason", "START_QUIET");
+        boolean bindResult = requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        Log.d(TAG, "bindService: Bind result: " + bindResult);
+    }
+
+    private void handleControls(String action) {
+    if (mediaController == null) {
+        Log.d(TAG, "MediaController is null!");
+        return;
+    }
+        if (action.equals(ACTION_PLAY)) {
+            if (isPlaying) {
+                mediaController.pause();
+                isPlaying = false;
+            } else {
+                mediaController.play();
+                isPlaying = true;
+            }
+        } else if (action.equals(ACTION_PAUSE)) {
+            mediaController.pause();
+            isPlaying = false;
+        } else if (action.equals(ACTION_NEXT)) {
+            mediaController.seekToNext();
+        } else if (action.equals(ACTION_PREVIOUS)) {
+            mediaController.seekToPrevious();
         }
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        requireActivity().unregisterReceiver(trackChangeReceiver);
-        requireActivity().unregisterReceiver(trackDurationCurrentPosition);
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (isBound) {
+            requireContext().unbindService(connection);
+            isBound = false;
+        }
     }
 }

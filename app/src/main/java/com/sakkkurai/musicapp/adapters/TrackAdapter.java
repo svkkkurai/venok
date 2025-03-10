@@ -2,8 +2,6 @@ package com.sakkkurai.musicapp.adapters;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import static com.google.common.reflect.Reflection.getPackageName;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -26,44 +24,37 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.sakkkurai.musicapp.R;
 import com.sakkkurai.musicapp.callback.MetadataManager;
+import com.sakkkurai.musicapp.database.QueueDatabase;
+import com.sakkkurai.musicapp.database.dao.QueueDao;
 import com.sakkkurai.musicapp.models.Track;
 import com.sakkkurai.musicapp.services.MusicService;
 import com.sakkkurai.musicapp.ui.activities.EditMetadataActivity;
-import com.sakkkurai.musicapp.ui.fragments.NowPlayingFragment;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> {
 
     private Context context;
     private ArrayList<Track> tracks;
-    ImageView trackImage;
-    TextView trackName;
-    TextView artistName;
-    TextView albumName;
-    private int firstVisible = -1;
-    private int lastVisible = -1;
-
     int np_savedround, np_savedcolor_parsed;
     String np_savedcolor;
     int playreason;
+    private QueueDao queueDao;
+    private QueueDatabase qDB;
     private Activity activity;
     public TrackAdapter(Context context, ArrayList<Track> tracks, int playreason, Activity activity) {
         this.context = context;
@@ -76,8 +67,9 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the item view for each track
         View view = LayoutInflater.from(context).inflate(R.layout.item_music, parent, false);
+        qDB = QueueDatabase.getInstance(context);
+        queueDao = qDB.queueDao();
         return new ViewHolder(view);
     }
 
@@ -88,7 +80,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         holder.trackName.setText(currentTrack.getTrackName());
         holder.artistName.setText(currentTrack.getArtistName());
         holder.albumName.setText(currentTrack.getAlbumName());
-        holder.duration.setText(currentTrack.getDuration());
+        holder.duration.setText(currentTrack.getFormattedDuration());
         holder.trackInfo.setOnClickListener(v -> {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(v.getContext());
             Bitmap trackArtBm = getTrackArt(currentTrack.getAudioPath());
@@ -96,7 +88,6 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
                 builder.setIcon(new BitmapDrawable(context.getResources(), trackArtBm));
             }
             else {
-                Log.d("SongInfo", "Cover not found. Path: " + currentTrack.getAudioPath());
                 builder.setIcon(R.drawable.setup_info);
             }
             String[] music_items = v.getResources().getStringArray(R.array.music_options_menu);
@@ -113,7 +104,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         });
 
         SharedPreferences prefs = context.getSharedPreferences("userPrefs", Context.MODE_PRIVATE);
-        np_savedround = prefs.getInt("appearance_nowplaying_trackCoverRound", 16);
+        np_savedround = prefs.getInt("cornerradius_library", activity.getResources().getInteger(R.integer.cornerradius_library));
         np_savedcolor = prefs.getString("appearance_nowplaying_trackCoverBackgroundColor", "#80b2b2b2");
         np_savedcolor_parsed = Color.parseColor(np_savedcolor);
 
@@ -124,17 +115,8 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
 
 
         holder.itemView.setOnClickListener( v -> {
-            playMusic(currentTrack.getAudioPath(), tracks, position);
-            SharedPreferences queue_prefs = context.getSharedPreferences("queue", MODE_PRIVATE);
-            SharedPreferences.Editor queue_editor = queue_prefs.edit();
-            switch (playreason) {
-                case 0:
-                    queue_editor.putString("playReason", context.getResources().getString(R.string.nowplaying_library));
-                    queue_editor.apply();
-            }
-            Intent playIntent = new Intent(context, MusicService.class);
-            playIntent.setAction("ACTION_PLAY_TRACK_LIBRARY");
-            ContextCompat.startForegroundService(context, playIntent);
+            playMusic(position);
+
         });
     }
 
@@ -163,7 +145,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
                                     "<b>" + context.getString(R.string.music_songinfo_title) + "</b> " + track.getTrackName() + "<br>" +
                                             "<b>" + context.getString(R.string.music_songinfo_artist) + "</b> " + track.getArtistName() + "<br>" +
                                             "<b>" + context.getString(R.string.music_songinfo_album) + "</b> " + track.getAlbumName() + "<br>" +
-                                            "<b>" + context.getString(R.string.music_songinfo_duration) + "</b> " + track.getDuration() + "<br>" +
+                                            "<b>" + context.getString(R.string.music_songinfo_duration) + "</b> " + track.getFormattedDuration() + "<br>" +
                                             "<b>" + context.getString(R.string.music_songinfo_location) + "</b> " + track.getAudioPath() + "<br>" +
                                             "<b>" + context.getString(R.string.music_songinfo_size) + "</b> " + track.getAudioSize() + " " +
                                             context.getString(R.string.music_songinfo_megabytes) + "<br>" +
@@ -200,21 +182,36 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         }
     }
 
+    private void playMusic(int pos) {
+            SharedPreferences prefs = context.getSharedPreferences("queue", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
 
-    private void playMusic(String path, ArrayList<Track> library, int pos) {
-        SharedPreferences prefs = context.getSharedPreferences("queue", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Future<?> dbOperation = executor.submit(() -> {
+                Log.d("QueueUpdate", "Starting DB operations");
+                queueDao.deleteAllTracks();
+                queueDao.createQueue(new ArrayList<>(tracks));
+                Log.d("QueueUpdate", "DB operations completed");
+            });
 
-        Gson gson = new Gson();
-        editor.putString("queue", gson.toJson(library));
-        editor.putInt("queuePosition", pos);
-        editor.apply();
-        BottomNavigationView navbar = activity.findViewById(R.id.main_navbar);
-        navbar.setSelectedItemId(R.id.id_navbar_nowplaying);
-        Intent intent = new Intent("com.sakkkurai.musicapp.TRACK_CURRENTPOS");
-        intent.putExtra("isPlaying", true);
-        intent.setPackage(context.getPackageName());
-        context.sendBroadcast(intent);
+            try {
+                dbOperation.get();
+                editor.putInt("queuePosition", pos);
+                editor.apply();
+                Intent startPlayback = new Intent(context, MusicService.class);
+                startPlayback.putExtra("reason", "START_PLAYBACK_ADAPTER");
+                activity.startForegroundService(startPlayback);
+                BottomNavigationView navbar = activity.findViewById(R.id.main_navbar);
+                if (navbar != null) {
+                    navbar.setSelectedItemId(R.id.id_navbar_nowplaying);
+                } else {
+                    Log.w("NowPlayingFragment", "BottomNavigationView not found");
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e("QueueUpdate", "Error during DB operation", e);
+            } finally {
+                executor.shutdown();
+            }
     }
 
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {

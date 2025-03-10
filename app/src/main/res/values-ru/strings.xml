@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MishaPlayer</string>
-    <string name="navigation_library">Библиотека</string>
-    <string name="navigation_artists">Исполнители</string>
-    <string name="navigation_playlists">Плейлисты</string>
-    <string name="navigation_settings">Настройки</string>
+    <string name="library">Библиотека</string>
+    <string name="artists">Исполнители</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="settings">Настройки</string>
     <string name="dialog_ok">ОК</string>
     <string name="dialog_no">НЕТ</string>
     <string name="dialog_dismiss">ПОНЯТНО</string>
@@ -19,7 +18,7 @@
     <string name="permission_gotosettings">НАСТРОЙКИ</string>
     <string name="permission_cancel">ОТМЕНИТЬ</string>
     <string name="setup_hello">Привет!</string>
-    <string name="setup_description">Mishaplayer - маленький и компактный плеер 🎧 с обширным функционалом! ⚡   \\👀 Мы акцентируем внимание на Material Design 🎨, чтоб наше приложение было в одном стиле с Вашей системой! 📱С большим количеством функций ⚙️вам даже не нужны стриминговые сервисы! 🎶🚫</string>
+    <string name="setup_description">Mishaplayer - маленький и компактный плеер 🎧 с обширным функционалом! ⚡   \n👀 Мы акцентируем внимание на Material Design 🎨, чтоб наше приложение было в одном стиле с Вашей системой! 📱С большим количеством функций ⚙️вам даже не нужны стриминговые сервисы! 🎶🚫</string>
     <string name="setup_additional">Вы можете выбрать папки для сканирования(но не сейчас). В будущем мы также добавим синхронизацию с облаком</string>
     <string name="setup_permission">Чтобы начать, нам необходимы некоторые разрешения. Они нужны для сканирования треков с устройства</string>
     <string name="setup_permissionrequire">Необходимые разрешения</string>
@@ -41,6 +40,7 @@
     <string name="setup_discard">Отменить</string>
     <string name="setup_permission_text">Разрешения</string>
     <string name="setup_scan">Сканирование</string>
+    <string name="setup_scan_text">Ниже вы можете выбрать, начиная с какого значения треки будут появляться в Вашей медиатеке! Также, вы можете нажать на этот текст, чтобы установить Ваше - кастомное значение! ✏️🔢</string>
     <string name="navbar_nowplaying">Сейчас играет</string>
     <string name="navbar_main">Домашняя</string>
     <string name="navbar_playlist">Плейлисты</string>
@@ -77,7 +77,6 @@
     <string name="nowplaying_playfrom">ИГРАЕТ С</string>
     <string name="nowplaying_emptyqueue">[ОЧЕРЕДЬ ПУСТА]</string>
     <string name="nowplaying_unknown">&lt;неизвестно&gt;</string>
-    <string name="nowplaying_library">Библиотека</string>
     <string name="nowplaying_queue_reachedstartlimit">Вы достигли начала очереди!</string>
     <string name="nowplaying_queue_reachedendlimit">Вы достигли конца очереди!</string>
     <string name="music_songinfo_bps">" BPS"</string>
@@ -133,8 +132,6 @@
     <string name="np_artist">Исполнитель</string>
     <string name="np_album">Альбом</string>
     <string name="np_playpause_desc">Воспроизвести</string>
-    <string name="np_devices_thisphone">Этот смартфон</string>
-    <string name="np_devices_thistablet">Этот планшет</string>
     <string name="track_image_desc">Обложка трека</string>
     <string name="track_info_title">Информация про трек</string>
     <string name="track_adapter_debug_initwith_toast">Библиотека инициализована с количеством треков: %d</string>

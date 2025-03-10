@@ -1,7 +1,5 @@
 package com.sakkkurai.musicapp.callback;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -9,17 +7,14 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.Mp3File;
 import com.sakkkurai.musicapp.R;
@@ -80,6 +75,8 @@ public class MetadataManager {
         }
     }
 
+
+
     private Uri getMediaStoreUri(String filePath, ContentResolver resolver) {
         Uri externalUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[] projection = {MediaStore.Audio.Media._ID};
@@ -130,19 +127,89 @@ public class MetadataManager {
         }
     }
 
+    public String getFormattedDuration(int duration)
+    {
+        try {
+            long totalSeconds = Long.parseLong(String.valueOf(duration)) / 1000;
+            long minutes = totalSeconds / 60;
+            long seconds = totalSeconds % 60;
+            long hours = minutes / 60;
+            minutes = minutes % 60;
+
+            if (totalSeconds < 600) { // < 10 min
+                return String.format("%d:%02d", minutes, seconds);
+            } else if (totalSeconds < 3600) { // // >10 min and <60 min
+                return String.format("%02d:%02d", minutes, seconds);
+            } else if (totalSeconds < 36000) { // >60 min and <600 min
+                return String.format("%d:%02d:%02d", hours, minutes, seconds);
+            } else { // // >600 min and <1440 min
+                return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            }
+        } catch (NumberFormatException e) {
+            return "0:00";
+        }
+    }
+
+    public String getFormattedDuration(long duration)
+    {
+        try {
+            long totalSeconds = duration / 1000;
+            long minutes = totalSeconds / 60;
+            long seconds = totalSeconds % 60;
+            long hours = minutes / 60;
+            minutes = minutes % 60;
+
+            if (totalSeconds < 600) { // < 10 min
+                return String.format("%d:%02d", minutes, seconds);
+            } else if (totalSeconds < 3600) { // // >10 min and <60 min
+                return String.format("%02d:%02d", minutes, seconds);
+            } else if (totalSeconds < 36000) { // >60 min and <600 min
+                return String.format("%d:%02d:%02d", hours, minutes, seconds);
+            } else { // // >600 min and <1440 min
+                return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            }
+        } catch (NumberFormatException e) {
+            return "0:00";
+        }
+    }
+
+    public Bitmap getTrackCover(byte[] artwork) {
+        artwork = retriever.getEmbeddedPicture();
+        if (artwork != null) {
+            return BitmapFactory.decodeByteArray(artwork, 0, artwork.length);
+        } else {
+            return null;
+        }
+    }
+
     public String getTrackName(String path) {
         retriever.setDataSource(path);
-        return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+        String trackName = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+        if (trackName != null && trackName.trim().isEmpty()) {
+            return context.getString(R.string.nowplaying_unknown);
+        } else {
+            return trackName;
+        }
     }
 
     public String getTrackArtist(String path) {
         retriever.setDataSource(path);
-        return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+        String trackArtist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+        if (trackArtist != null && trackArtist.trim().isEmpty()) {
+            return context.getString(R.string.nowplaying_unknown);
+        } else {
+            return trackArtist;
+        }
     }
 
     public String getTrackAlbum(String path) {
         retriever.setDataSource(path);
-        return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+        String trackAlbum = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+        if (trackAlbum != null && trackAlbum.trim().isEmpty()) {
+            return context.getString(R.string.nowplaying_unknown);
+        } else {
+            return trackAlbum;
+        }
     }
 
     public String getTrackYear(String path) {
