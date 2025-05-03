@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.graphics.drawable.IconCompat;
 import androidx.media3.common.C;
 import androidx.media3.common.Player;
+import androidx.media3.common.util.NotificationUtil;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.CommandButton;
 import androidx.media3.session.DefaultMediaNotificationProvider;
@@ -343,7 +344,7 @@ public class MusicService extends MediaSessionService {
             NotificationChannel channel = new NotificationChannel(
                     "Music Playback",
                     "Music Channel",
-                    NotificationManager.IMPORTANCE_HIGH
+                    NotificationManager.IMPORTANCE_NONE
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);

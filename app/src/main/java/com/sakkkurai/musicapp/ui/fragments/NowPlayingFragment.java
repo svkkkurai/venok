@@ -90,7 +90,7 @@ public class NowPlayingFragment extends Fragment {
         songArtworkShapeableImageView = view.findViewById(R.id.nowplaying_trackcover);
         songDurationSeekbar = view.findViewById(R.id.nowplaying_trackSeekbar);
         preferences = requireContext().getSharedPreferences("userPrefs", MODE_PRIVATE);
-        cornerradius = preferences.getInt("cornerradius", R.integer.cornerradius);
+        cornerradius = preferences.getInt("cornerradius", requireContext().getResources().getInteger(R.integer.cornerradius));
 
         // Button listeners
         playImageButton.setOnClickListener(v -> handleControls(ACTION_PLAY));

@@ -12,7 +12,7 @@ android {
         applicationId = "com.sakkkurai.musicapp"
         minSdk = 30
         targetSdk = 35
-        versionCode = 311
+        versionCode = 312
         versionName = "3.1"
     }
 
