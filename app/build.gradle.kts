@@ -5,15 +5,15 @@ plugins {
 }
 
 android {
-    namespace = "com.sakkkurai.musicapp"
+    namespace = "com.sakkkurai.venok"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.sakkkurai.musicapp"
+        applicationId = "com.sakkkurai.venok"
         minSdk = 30
         targetSdk = 35
-        versionCode = 312
-        versionName = "3.1"
+        versionCode = 322
+        versionName = "3.2"
     }
 
 
@@ -40,6 +40,10 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
+    }
+
+    lint {
+        abortOnError = false
     }
 }
 

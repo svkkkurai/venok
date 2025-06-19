@@ -28,8 +28,8 @@
             android:name=".ui.activities.EditMetadataActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activities.SettingsAppearance"
-            android:exported="true" />
+            android:name=".ui.activities.SettingsActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.activities.MainActivity"
             android:exported="true">

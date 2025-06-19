@@ -1,24 +1,21 @@
 <resources>
-    <string name="app_name" translatable="false">MishaPlayer</string>
+    <string name="app_name" translatable="false">venok</string>
     <string name="library">Library</string>
     <string name="artists">Artists</string>
     <string name="playlists">Playlists</string>
     <string name="settings">Settings</string>
-    <string name="dialog_ok">OK</string>
-    <string name="dialog_no">NO</string>
-    <string name="dialog_dismiss">DISMISS</string>
-    <string name="dialog_cancel">CANCEL</string>
-    <string name="dialog_email">EMAIL</string>
+    <string name="ok">Ok</string>
+    <string name="no">No</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="cancel">Cancel</string>
     <string name="permission_requirepermissionTitle">Needs permission</string>
     <string name="permission_requirepermission">To continue, the app needs the required permission.</string>
-    <string name="permission_grant">GRANT</string>
-    <string name="permission_no">NO</string>
+    <string name="grant">Grant</string>
     <string name="permission_requirepermissionInSettingsTitle">Permission required!</string>
     <string name="permission_requirepermissionInSettings">You have denied this permission. Please enable it manually in the app settings.</string>
-    <string name="permission_gotosettings">GO TO SETTINGS</string>
-    <string name="permission_cancel">CANCEL</string>
+    <string name="gotosettings">Go to settings</string>
     <string name="setup_hello">Hello!</string>
-    <string name="setup_description">Mishaplayer - a small and compact player 🎧 with great functionality! ⚡   \n👀 We pay great attention to Material Design 🎨 to ensure your music app fits the system! 📱Along with a vast number of options ⚙️, you no longer need streaming services! 🎶🚫</string>
+    <string name="setup_description">- a small and compact player 🎧 with great functionality! ⚡    👀 We pay great attention to Material Design 🎨 to ensure your music app fits the system! 📱Along with a vast number of options ⚙️, you no longer need streaming services! 🎶🚫</string>
     <string name="setup_additional">You can choose or remove folders from the scan (but not now). In future we\'ll make sync in cloud.</string>
     <string name="setup_permission">Before we start, we need to get some permissions 🎵🔐. They are needed so that we can retrieve local audio files from your device.</string>
     <string name="setup_permissionrequire">Permission required!</string>
@@ -33,7 +30,7 @@
     <string name="setup_p3_folders_for_scan">Select or remove folders for scan.</string>
     <string name="setup_almostdone">Almost done!</string>
     <string name="setup_grant_button">Grant</string>
-    <string name="setup_done">Done!</string>
+    <string name="done">Done!</string>
     <string name="setup_userdurationscan_title">Enter duration</string>
     <string name="setup_userdurationscan">Enter duration, from which track will be scanned.</string>
     <string name="setup_scan_enternormalvalue">Enter normal value!</string>
@@ -42,22 +39,24 @@
     <string name="setup_permission_text">Permissions</string>
     <string name="setup_scan">Scan</string>
     <string name="setup_scan_text">Below you can choose from what duration the tracks will appear in your library! ⏳🎶 Also, you can click right here to set your own – custom value! ✏️🔢</string>
-    <string name="navbar_nowplaying">Now playing</string>
-    <string name="navbar_main">Home</string>
-    <string name="navbar_playlist">Playlist</string>
-    <string name="navbar_artist">Artist</string>
-    <string name="navbar_settings">Settings</string>
+    <string name="nowplaying">Now playing</string>
+    <string name="home">Home</string>
+    <string name="playlist">Playlist</string>
+    <string name="artist">Artist</string>
     <string name="settings_version">App version</string>
     <string name="settings_appearance">Appearance and style</string>
+    <string name="settings_playback">Playback</string>
+    <string name="settings_playback_autolaunch">Autoplay on launch</string>
+    <string name="settings_playback_muteatzerovolume">Pause when volume is 0</string>
     <string name="settings_appearance_round_text">Cover rounding radius</string>
-    <string name="settings_appearance_general">General</string>
-    <string name="settings_appearance_general_language">Language</string>
+    <string name="general">General</string>
+    <string name="language">Language</string>
     <string name="settings_versionError">Version information not available</string>
     <string name="settings_debug_holdagain">Press again for debug menu!</string>
     <string name="debug_Title">Debug Menu</string>
     <string name="debug_use_extended_debug_enable">Extended debug enabled!</string>
     <string name="debug_use_extended_debug_disable">Extended debug disabled!</string>
-    <string name="debug_closeDialog">Close</string>
+    <string name="close">Close</string>
     <string-array name="debug_menu_items">
         <item>Restart Activity</item>
         <item>Restart Setup</item>
@@ -69,11 +68,6 @@
     <string name="music_albumName">Album Name</string>
     <string name="music_artistName">Artist Name</string>
     <string name="np_trackNotPlaying">[No track]</string>
-    <string name="np_track">Track</string>
-    <string name="np_artist">Artist</string>
-    <string name="np_album">Album</string>
-    <string name="np_playpause_desc">Play</string>
-    <string name="track_image_desc">Track art</string>
     <string name="track_info_title">Track Info</string>
     <string name="track_adapter_debug_initwith_toast">Adapter initialized with tracks: %d</string>
     <string name="music_options_menu_title">Additional</string>
@@ -92,7 +86,7 @@
     <string name="music_songinfo_size">📏 Size: </string>
     <string name="music_songinfo_bitrate">🎧 Bitrate: </string>
     <string name="music_songinfo_megabytes"> MB</string>
-    <string name="music_songinfo_bps"> BPS</string>
+    <string name="music_songinfo_bps">" kbps"</string>
     <string name="music_songinfo_dialog_title">Song info</string>
     <string name="music_songinfo_delete_successfully">Song deleted successfully!</string>
     <string name="music_songinfo_delete_error">Deleting failed!</string>
@@ -115,27 +109,21 @@
     <string name="editmd_comment">Comment</string>
     <string name="editmd_lrcedit">EDIT EMBEDDED LYRICS</string>
     <string name="editmd_edit_savingtemperror">An error occurred while saving temp file.</string>
-    <string name="editmd_savesuccess">Saved!</string>
-    <string name="editmd_savesuccesswithmod">File updated!</string>
+    <string name="saved">Saved!</string>
     <string name="editmd_error">Error!</string>
     <string name="editmd_errormessage">Unfortunately, an error occurred :(\n</string>
     <string name="editmd_saving">Please, wait...</string>
-    <string name="email_mdedit_errorinit">[METADATA EDIT, INITIALIZATION ERROR]</string>
-    <string name="email_mdedit_errormdsave">[METADATA EDIT, SAVING METADATA ERROR]</string>
-    <string name="email_setup_error">[SETUP EMAIL]</string>
-    <string name="email_mdedit_error_message">\n\n————————————\n\nPLEASE, TELL US IN DETAILS HOW YOU GOT THIS ERROR BELLOW\n\n</string>
-    <string name="email_mdedit_reason">Reason: </string>
     <string name="setup_scan_dialog_seconds_hint">Seconds</string>
-    <string name="editmd_save">Save</string>
+    <string name="save">Save</string>
     <string name="main_needpermission">To display your audio files, we need permission to read audio files.</string>
     <string name="main_permissionsgotosettings">Permission to read audio files has not been granted, so we cannot read music from your device. Go to settings and grant permission to read audio files.</string>
-    <string name="editmd_failedupdatemd">Failed to update metadata!</string>
-    <string name="editmd_successdupdatemd">Metadata updated!</string>
-    <string name="nowplaying_playondevice">PLAYING ON</string>
+    <string name="failedupdatemd">Failed to update metadata!</string>
     <string name="nowplaying_playfrom">PLAYING FROM</string>
     <string name="nowplaying_emptyqueue">[QUEUE IS EMPTY]</string>
     <string name="nowplaying_unknown">&lt;unknown&gt;</string>
-    <string name="nowplaying_queue_reachedstartlimit">You have reached the start of the queue!</string>
-    <string name="nowplaying_queue_reachedendlimit">You have reached the end of the queue!</string>
+    <string name="muted_zero_volume">Volume is 0 — playback is paused.</string>
+    <string name="unmuted_zero_volume">Volume is back — playback resumes.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

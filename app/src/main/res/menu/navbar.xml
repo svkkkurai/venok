@@ -2,20 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
     android:id="@+id/id_navbar_nowplaying"
-    android:title="@string/navbar_nowplaying"
+    android:title="@string/nowplaying"
     android:icon="@drawable/navbar_play_outline"
     android:enabled="true"></item>
 
     <item
         android:id="@+id/id_navbar_main"
-        android:title="@string/navbar_main"
+        android:title="@string/library"
         android:icon="@drawable/navbar_home_outline"
         android:enabled="true"></item>
 
     <item
         android:enabled="true"
         android:id="@+id/id_navbar_artist"
-        android:title="@string/navbar_artist"
+        android:title="@string/artists"
         android:icon="@drawable/navbar_artist_outline">
     </item>
 <!---
@@ -29,6 +29,6 @@
     <item
         android:id="@+id/id_navbar_settings"
         android:icon="@drawable/navbar_settings_outline"
-        android:title="@string/navbar_settings"
+        android:title="@string/settings"
         android:enabled="true"></item>
 </menu>

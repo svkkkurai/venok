@@ -38,15 +38,6 @@
             app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/settings_topbar"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </ScrollView>
-
         <LinearLayout
             android:id="@+id/settings_appearance"
             android:layout_width="match_parent"
@@ -55,30 +46,57 @@
             android:orientation="horizontal"
             android:paddingStart="16sp"
             app:layout_constraintTop_toBottomOf="@+id/settings_topbar"
-            tools:layout_editor_absoluteX="14dp">
-
+            tools:layout_editor_absoluteX="0dp">
             <ImageView
-                android:paddingTop="8dp"
                 android:id="@+id/settings_appearance_icon"
                 android:layout_width="32sp"
                 android:layout_height="32sp"
-
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/settings_appearance" />
-
-            <TextView
                 android:paddingTop="8dp"
-
+                android:src="@drawable/settings_appearance" />
+            <TextView
                 android:id="@+id/settings_appearance_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:textSize="14sp"
                 android:layout_marginStart="4sp"
-                android:text="@string/settings_appearance" />
-
+                android:paddingTop="8dp"
+                android:text="@string/settings_appearance"
+                android:textSize="14sp" />
         </LinearLayout>
 
 
+        <LinearLayout
+            android:id="@+id/settings_playback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="SettingsOpenAppereance"
+            android:orientation="horizontal"
+            android:paddingStart="16sp"
+            app:layout_constraintTop_toBottomOf="@+id/settings_appearance"
+            tools:layout_editor_absoluteX="0dp">
+
+            <ImageView
+                android:id="@+id/settings_playback_icon"
+                android:layout_width="32sp"
+                android:layout_height="32sp"
+                android:layout_gravity="center_vertical"
+
+                android:paddingTop="8dp"
+                android:src="@drawable/nowplaying_play" />
+
+            <TextView
+                android:id="@+id/settings_playback_title"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="4sp"
+                android:paddingTop="8dp"
+                android:text="@string/settings_playback"
+                android:textSize="14sp" />
+
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
