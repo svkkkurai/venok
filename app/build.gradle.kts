@@ -12,8 +12,8 @@ android {
         applicationId = "com.sakkkurai.venok"
         minSdk = 30
         targetSdk = 35
-        versionCode = 322
-        versionName = "3.2"
+        versionCode = 325
+        versionName = "3.2.1"
     }
 
 

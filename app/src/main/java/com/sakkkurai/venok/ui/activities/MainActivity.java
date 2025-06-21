@@ -25,6 +25,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.sakkkurai.venok.services.MusicService;
+import com.sakkkurai.venok.tools.Updater;
 import com.sakkkurai.venok.ui.fragments.ArtistFragment;
 import com.sakkkurai.venok.ui.fragments.HomeFragment;
 import com.sakkkurai.venok.ui.fragments.NowPlayingFragment;
@@ -32,6 +33,8 @@ import com.sakkkurai.venok.R;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.sakkkurai.venok.ui.fragments.SettingsFragment;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,18 +47,25 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == 1001) {
-                if (resultCode == Activity.RESULT_OK) {
-                    Toast.makeText(this, R.string.music_songinfo_delete_successfully, Toast.LENGTH_SHORT).show();
-                    FragmentManager fm = getSupportFragmentManager();
-                    HomeFragment homeFragment = (HomeFragment) fm.findFragmentById(R.id.main_frame_layout);
-                    if (homeFragment != null) {
-                        homeFragment.loadAudioFilesAsync();
-                    }
+            switch (requestCode){
+                case 1001:
+                    if (resultCode == Activity.RESULT_OK) {
+                        Toast.makeText(this, R.string.music_songinfo_delete_successfully, Toast.LENGTH_SHORT).show();
+                        FragmentManager fm = getSupportFragmentManager();
+                        HomeFragment homeFragment = (HomeFragment) fm.findFragmentById(R.id.main_frame_layout);
+                        if (homeFragment != null) {
+                            homeFragment.loadAudioFilesAsync();
+                        }
 
-                } else {
-                    Toast.makeText(this, R.string.music_songinfo_delete_error, Toast.LENGTH_SHORT).show();
-                }
+                    } else {
+                        Toast.makeText(this, R.string.music_songinfo_delete_error, Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+
+                case Updater.REQUEST_INSTALL_UNKNOWNSOURCES:
+                    File apk = new File(getFilesDir(), Updater.apkName);
+                    Updater.installApk(this, apk);
+                    break;
             }
         }
 
@@ -84,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (savedInstanceState == null) {
+            try {
+                Updater.checkUpdates(this);
+            } catch (PackageManager.NameNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             if (getIntent().getBooleanExtra("OPEN_NOWPLAYING", false)) {
                 navbar.setSelectedItemId(R.id.id_navbar_nowplaying);
                 changeFragment(new NowPlayingFragment());

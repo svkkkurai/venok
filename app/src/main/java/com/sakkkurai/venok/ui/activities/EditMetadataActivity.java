@@ -53,7 +53,7 @@ import org.jaudiotagger.tag.TagException;
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.sakkkurai.venok.R;
-import com.sakkkurai.venok.callback.AudioTools;
+import com.sakkkurai.venok.tools.AudioTools;
 
 import java.io.File;
 import java.io.FileInputStream;
