@@ -30,6 +30,8 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew assembleRelease
+      - name: Show APK files
+        run: ls -R app/build/outputs/apk
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
