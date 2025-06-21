@@ -185,7 +185,7 @@ public class Updater {
     public class UpdateConfig {
         public int versionCode;
         public String downloadLink;
-        public Map<String, String> changelog;
+        public HashMap<String, String> changelog;
     }
 
 
