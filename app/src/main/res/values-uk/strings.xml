@@ -9,6 +9,7 @@
     <string name="settings">Налаштування</string>
     <string name="ok">Ок</string>
     <string name="no">Ні</string>
+    <string name="update">Оновити</string>
     <string name="dismiss">Зрозуміло</string>
     <string name="cancel">Скасувати</string>
     <string name="permission_requirepermissionTitle">Потрібні дозволи</string>
@@ -122,4 +123,6 @@
     <string name="unmuted_zero_volume">Гучність повернута — відтворення відновлено.</string>
     <string name="settings_playback">Відтворення</string>
     <string name="settings_playback_autolaunch">"Автовідтворення під час запуску "</string>
+    <string name="updater_updateavailable_title">Доступне оновлення! 🔝</string>
+    <string name="updater_updateavailable">✨Гарні новини! Оновлення вже чекає вашого завантаження!\n\n</string>
 </resources>

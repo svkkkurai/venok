@@ -6,6 +6,7 @@
     <string name="settings">Settings</string>
     <string name="ok">Ok</string>
     <string name="no">No</string>
+    <string name="update">Update</string>
     <string name="dismiss">Dismiss</string>
     <string name="cancel">Cancel</string>
     <string name="permission_requirepermissionTitle">Needs permission</string>
@@ -123,7 +124,7 @@
     <string name="nowplaying_unknown">&lt;unknown&gt;</string>
     <string name="muted_zero_volume">Volume is 0 — playback is paused.</string>
     <string name="unmuted_zero_volume">Volume is back — playback resumes.</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="updater_updateavailable_title">Update available! 🔝</string>
+    <string name="updater_updateavailable">"✨Good news! New update is waiting up your download!\n\n"</string>
 
 </resources>

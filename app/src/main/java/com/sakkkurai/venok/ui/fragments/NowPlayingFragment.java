@@ -37,7 +37,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.sakkkurai.venok.R;
-import com.sakkkurai.venok.callback.AudioTools;
+import com.sakkkurai.venok.tools.AudioTools;
 import com.sakkkurai.venok.services.MusicService;
 
 import java.util.concurrent.ExecutorService;

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AppInsightsSettings">
+    <option name="selectedTabId" value="Firebase Crashlytics" />
     <option name="tabSettings">
       <map>
         <entry key="Firebase Crashlytics">
@@ -8,10 +9,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.sakkkurai.musicapp" />
-                  <option name="mobileSdkAppId" value="1:536642931620:android:1d096408d75b8b29064f31" />
-                  <option name="projectId" value="musicapp-9126c" />
-                  <option name="projectNumber" value="536642931620" />
+                  <option name="appId" value="com.sakkkurai.venok" />
+                  <option name="mobileSdkAppId" value="1:509613531561:android:a6bf5c1d5a82c39215e4b8" />
+                  <option name="projectId" value="venok-music-player" />
+                  <option name="projectNumber" value="509613531561" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

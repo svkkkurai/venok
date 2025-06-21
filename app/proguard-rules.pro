@@ -1,9 +1,11 @@
 -keep class com.google.gson.** { *; }
 -keep class org.jaudiotagger.** { *; }
-
+-keep class java.util.Map { *; }
 -keep class com.google.gson.reflect.TypeToken { *; }
--keep class * extends com.google.gson.reflect.TypeToken
-
--keepattributes AnnotationDefault,RuntimeVisibleAnnotations
 -keep class com.google.gson.reflect.TypeToken { <fields>; }
+-keep class * implements com.google.gson.TypeAdapterFactory { *; }
+-keep class * implements com.google.gson.TypeAdapter { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+-keep class com.sakkkurai.venok.tools.Updater$UpdateConfig { *; }
+-keepattributes AnnotationDefault,RuntimeVisibleAnnotations
 -keepclassmembers class **$TypeAdapterFactory { <fields>; }

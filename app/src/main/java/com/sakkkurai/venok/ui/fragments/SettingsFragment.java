@@ -45,6 +45,8 @@ public class SettingsFragment extends Fragment {
             String versionName = packageInfo.versionName;
             int versionCode = packageInfo.versionCode;
 
+
+
             version.setText(versionName + " (" + versionCode + ")");
 
         } catch (PackageManager.NameNotFoundException e) {
