@@ -217,14 +217,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/setup_seekbar" />
 
-            <SeekBar
+            <com.google.android.material.slider.Slider
                 android:id="@+id/setup_seekbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:max="30"
-                android:stepSize="1"
+                android:valueFrom="0"
+                android:valueTo="15"
+                app:labelBehavior="gone"
                 android:thumbTint="?attr/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/setup_seekbarmax"
@@ -235,7 +236,7 @@
                 android:id="@+id/setup_seekbarmax"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="30"
+                android:text="15"
                 app:layout_constraintBottom_toBottomOf="@+id/setup_seekbar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/setup_seekbar" />

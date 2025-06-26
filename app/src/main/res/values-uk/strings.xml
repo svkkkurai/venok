@@ -44,7 +44,7 @@
     <string name="setup_scan">Сканування</string>
     <string name="setup_scan_text">Нижче ви можете обрати тривалість, починаючи з якої треки почнуть з\'являтися в Вашій медіатекі! ⏳🎶 Також, Ви можете натиснути сюди та встановити ваше власне значення! ✏️🔢</string>
     <string name="settings_version">Версія додатку</string>
-    <string name="settings_appearance">Оформлення та зовнішній вигляд</string>
+    <string name="settings_appearance">Оформлення</string>
     <string name="settings_playback_muteatzerovolume">Вимкнути, коли звук - 0</string>
     <string name="settings_appearance_round_text">Радіус закруглення обкладинок треків</string>
     <string name="general">Загальні</string>

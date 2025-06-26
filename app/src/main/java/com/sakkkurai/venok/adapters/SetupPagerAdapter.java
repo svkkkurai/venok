@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.slider.Slider;
 import com.sakkkurai.venok.R;
 import com.sakkkurai.venok.ui.activities.SetupActivity;
 
@@ -126,7 +127,7 @@ public class SetupPagerAdapter extends RecyclerView.Adapter<SetupPagerAdapter.Vi
                     });
                 }
             }
-            SeekBar seekbar;
+            Slider seekbar;
             TextView seekbarmax;
             TextView seekbarText;
 
@@ -139,22 +140,24 @@ public class SetupPagerAdapter extends RecyclerView.Adapter<SetupPagerAdapter.Vi
             SharedPreferences.Editor editor = sp.edit();
             int progress = sp.getInt("scanfrom", activity.getResources().getInteger(R.integer.scanfrom));
                 if (seekbar != null && seekbarText != null) {
-                    seekbar.setProgress(progress);
+                    seekbar.setValue(progress);
                     seekbarText.setText(String.valueOf(progress));
 
-                    seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    seekbar.addOnChangeListener(new Slider.OnChangeListener() {
                         @Override
-                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            seekbarText.setText(String.valueOf(progress));
+                        public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                            seekbarText.setText(String.valueOf((int) value));
+                        }
+                    });
+                    seekbar.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
+                        @Override
+                        public void onStartTrackingTouch(@NonNull Slider slider) {
 
                         }
 
                         @Override
-                        public void onStartTrackingTouch(SeekBar seekBar) { }
-
-                        @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) {
-                            editor.putInt("scanfrom", seekbar.getProgress());
+                        public void onStopTrackingTouch(@NonNull Slider slider) {
+                            editor.putInt("scanfrom", (int) seekbar.getValue());
                             editor.apply();
                         }
                     });

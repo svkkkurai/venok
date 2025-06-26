@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment {
         this.trackLibrary = view.findViewById(R.id.home_musicLibrary);
         trackLibrary.setLayoutManager(new LinearLayoutManager(getContext()));
         trackLibrary.setHasFixedSize(true);
+
 //        FastScrollerBuilder fastScrollerBuilder = new FastScrollerBuilder(trackLibrary);
 //        fastScrollerBuilder.setPadding(4,0,0,0)
 //                        .disableScrollbarAutoHide();

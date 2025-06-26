@@ -113,6 +113,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="36dp"
             android:orientation="horizontal"
+            android:gravity="center"
             app:layout_constraintBottom_toTopOf="@id/layout_nowplaying_songcontrols"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -124,7 +125,8 @@
                 android:text="-:--"
                 android:textColor="?attr/colorOnSurface" />
 
-            <SeekBar
+            <com.google.android.material.slider.Slider
+                app:labelBehavior="gone"
                 android:id="@+id/nowplaying_trackSeekbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

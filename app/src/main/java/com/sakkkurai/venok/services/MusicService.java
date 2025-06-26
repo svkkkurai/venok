@@ -69,9 +69,56 @@ public class MusicService extends MediaSessionService {
     private final String TAG = "MusicService";
     public static boolean isRunning = false;
     private AudioManager audioManager;
+    private boolean wasPlayedBeforeLostAF = true;
     private ContentObserver volumeObserver;
     private AudioFocusRequest audioFocusRequest;
     private boolean pausedCauseZeroVolume;
+    AudioManager.OnAudioFocusChangeListener focusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            if (mediaPlayer == null) return;
+
+            switch (focusChange) {
+                case AudioManager.AUDIOFOCUS_GAIN:
+
+                    Log.d(TAG, "AUDIOFOCUS_GAIN, isPlaying: " + mediaPlayer.isPlaying() + ", playbackState: " + mediaPlayer.getPlaybackState());
+                    mediaPlayer.setVolume(1f);
+                    if (!mediaPlayer.isPlaying() && mediaPlayer.getPlaybackState() == Player.STATE_READY && wasPlayedBeforeLostAF) {
+                        Log.d(TAG, "Attempting to resume playback");
+                        mediaPlayer.play();
+                    } else {
+                        Log.d(TAG, "Player not ready or already playing, state: " + mediaPlayer.getPlaybackState());
+                        if (mediaPlayer.getPlaybackState() == Player.STATE_IDLE || mediaPlayer.getPlaybackState() == Player.STATE_ENDED) {
+                            mediaPlayer.prepare();
+                            mediaPlayer.play();
+                        }
+                    }
+                    break;
+
+                case AudioManager.AUDIOFOCUS_LOSS:
+                    Log.d(TAG, "AUDIOFOCUS_LOSS");
+                    wasPlayedBeforeLostAF = mediaPlayer.isPlaying();
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                    }
+                    break;
+
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                    Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT");
+                    wasPlayedBeforeLostAF = mediaPlayer.isPlaying();
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                    }
+                    break;
+
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                    Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
+                    mediaPlayer.setVolume(0.2f);
+                    break;
+            }
+        }
+    };
+
     public class MusicServiceBinder extends Binder {
         public MusicService getService() {
             return MusicService.this;
@@ -105,6 +152,7 @@ public class MusicService extends MediaSessionService {
         super.onCreate();
         Log.d("MusicService", "Service started!");
         isRunning = true;
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         userPrefsPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
         listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -114,9 +162,7 @@ public class MusicService extends MediaSessionService {
                 }
             }
         };
-
         userPrefsPreferences.registerOnSharedPreferenceChangeListener(listener);
-
         queue_prefs = getSharedPreferences("queue", MODE_PRIVATE);
         queue_editor = queue_prefs.edit();
         mediaPlayer = new ExoPlayer.Builder(this).build();
@@ -134,56 +180,7 @@ public class MusicService extends MediaSessionService {
                     .build();
 
         }
-        AudioManager.OnAudioFocusChangeListener focusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
-            @Override
-            public void onAudioFocusChange(int focusChange) {
-                if (mediaPlayer == null) return;
 
-                switch (focusChange) {
-                    case AudioManager.AUDIOFOCUS_GAIN:
-                        Log.d(TAG, "AUDIOFOCUS_GAIN, isPlaying: " + mediaPlayer.isPlaying() + ", playbackState: " + mediaPlayer.getPlaybackState());
-                        mediaPlayer.setVolume(1f);
-                        if (!mediaPlayer.isPlaying() && mediaPlayer.getPlaybackState() == Player.STATE_READY) {
-                            Log.d(TAG, "Attempting to resume playback");
-                            mediaPlayer.play();
-                        } else {
-                            Log.d(TAG, "Player not ready or already playing, state: " + mediaPlayer.getPlaybackState());
-                            if (mediaPlayer.getPlaybackState() == Player.STATE_IDLE || mediaPlayer.getPlaybackState() == Player.STATE_ENDED) {
-                                mediaPlayer.prepare();
-                                mediaPlayer.play();
-                            }
-                        }
-                        break;
-
-                    case AudioManager.AUDIOFOCUS_LOSS:
-                        Log.d(TAG, "AUDIOFOCUS_LOSS");
-                        if (mediaPlayer.isPlaying()) {
-                            mediaPlayer.pause();
-                        }
-                        break;
-
-                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-                        Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT");
-                        if (mediaPlayer.isPlaying()) {
-                            mediaPlayer.pause();
-                        }
-                        break;
-
-                    case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                        Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
-                        mediaPlayer.setVolume(0.2f);
-                        break;
-                }
-            }
-        };
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                .setOnAudioFocusChangeListener(focusChangeListener)
-                .setAudioAttributes(new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .setContentType(CONTENT_TYPE_MUSIC)
-                        .build())
-                .build();
         setMediaNotificationProvider(new notificationProvider(this, mediaSession));
         addSession(mediaSession);
         mediaPlayer.addListener(new Player.Listener() {
@@ -260,9 +257,16 @@ public class MusicService extends MediaSessionService {
         Log.d(TAG, "Service destroying!");
         isRunning = false;
         userPrefsPreferences.unregisterOnSharedPreferenceChangeListener(listener);
-        audioManager.abandonAudioFocusRequest(audioFocusRequest);
-        mediaSession.release();
-        mediaPlayer.release();
+        if (audioManager != null && audioFocusRequest != null) {
+            audioManager.abandonAudioFocusRequest(audioFocusRequest);
+        }
+        if (mediaSession != null) {
+            mediaSession.release();
+
+        }
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
         if (volumeObserver != null) {
             getContentResolver().unregisterContentObserver(volumeObserver);
             volumeObserver = null;
@@ -286,14 +290,13 @@ public class MusicService extends MediaSessionService {
             long currentTimeMillis = System.currentTimeMillis();
             mainHandler.post(() -> {
                 mediaPlayer.clearMediaItems();
-                int result = audioManager.requestAudioFocus(audioFocusRequest);
                 if (!queue.isEmpty()) {
                     mediaPlayer.setMediaItems(queue, queue_prefs.getInt("queuePosition", 0), C.TIME_UNSET);
                     Log.d("MusicService", "Set MediaItem's was : " + (System.currentTimeMillis() - currentTimeMillis) + "ms");
                     mediaPlayer.prepare();
                     }
                     if(autoplay) {
-                        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
+                        if (requestAF() == AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
                             mediaPlayer.play();
                     }
                     Log.d("MusicService", "MediaItems count: " + mediaPlayer.getMediaItemCount());
@@ -319,8 +322,25 @@ public class MusicService extends MediaSessionService {
         return builder.build();
     }
 
+    private int requestAF() {
+        if (audioManager == null) {
+            audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        }
+        audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setOnAudioFocusChangeListener(focusChangeListener)
+                .setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(CONTENT_TYPE_MUSIC)
+                        .build())
+                .build();
+        return audioManager.requestAudioFocus(audioFocusRequest);
+    }
+
 
     private void registerHandlingChangingVolume() {
+        if (audioManager == null) {
+            audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        }
         boolean muteAtZeroVolume = userPrefsPreferences.getBoolean("muteAtZeroVolume", true);
 
         if (volumeObserver != null) {

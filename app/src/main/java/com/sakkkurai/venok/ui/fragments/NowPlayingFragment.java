@@ -34,6 +34,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.slider.Slider;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.sakkkurai.venok.R;
@@ -52,8 +53,9 @@ public class NowPlayingFragment extends Fragment {
     private ImageButton playImageButton, nextImageButton, previousImageButton;
     private boolean isPlaying = false;
     private SharedPreferences preferences;
-    private SeekBar songDurationSeekbar;
+    private Slider songDurationSeekbar;
     private MediaController mediaController;
+    private boolean isTracking;
     private ListenableFuture<MediaController> listenableFuture;
     private final String TAG = "NowPlayingFragment";
     private MusicService musicService;
@@ -98,20 +100,29 @@ public class NowPlayingFragment extends Fragment {
         playImageButton.setOnClickListener(v -> handleControls(ACTION_PLAY));
         nextImageButton.setOnClickListener(v -> handleControls(ACTION_NEXT));
         previousImageButton.setOnClickListener(v -> handleControls(ACTION_PREVIOUS));
-        songDurationSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                Log.d(TAG, "Changed key: " + key);
+                if (key.equals("cornerradius")) {
+                    cornerradius = prefs.getInt(key, 16);
+                    updateUI(true);
+                }
+            }
+        };
+        preferences.registerOnSharedPreferenceChangeListener(listener);
 
+
+        songDurationSeekbar.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
+            @Override
+            public void onStartTrackingTouch(@NonNull Slider slider) {
+                slider.getValue();
+                isTracking = true;
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                mediaController.seekTo(songDurationSeekbar.getProgress());
+            public void onStopTrackingTouch(@NonNull Slider slider) {
+                isTracking = false;
+                mediaController.seekTo((long) songDurationSeekbar.getValue());
             }
         });
         return view;
@@ -166,7 +177,7 @@ public class NowPlayingFragment extends Fragment {
             @Override
             public void run() {
                 updateCurrentPlayingPosition();
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 50);
             }
         };
         handler.post(runnable);
@@ -176,7 +187,9 @@ public class NowPlayingFragment extends Fragment {
 
     private void updateCurrentPlayingPosition() {
         if (mediaController.getPlaybackState() == Player.STATE_READY) {
-            songDurationSeekbar.setProgress((int) mediaController.getCurrentPosition());
+            if (!isTracking) {
+                songDurationSeekbar.setValue((int) mediaController.getCurrentPosition());
+            }
             songDurationCurrentTextView.setText(new AudioTools(getActivity()).getFormattedDuration(mediaController.getCurrentPosition()));
         }
 
@@ -236,7 +249,7 @@ public class NowPlayingFragment extends Fragment {
                 AudioTools audioTools = new AudioTools(getActivity());
                 long songDurationMs = mediaController.getDuration();
                 songDurationMaxTextView.setText(audioTools.getFormattedDuration(songDurationMs));
-                songDurationSeekbar.setMax((int) songDurationMs);
+                songDurationSeekbar.setValueTo((int) songDurationMs);
             }
         }
 
