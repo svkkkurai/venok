@@ -266,8 +266,6 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
     }
 
 
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
 

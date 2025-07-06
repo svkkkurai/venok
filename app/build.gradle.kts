@@ -49,7 +49,8 @@ android {
 
 dependencies {
 
-    implementation(libs.room.runtime);
+    implementation(libs.commons.io)
+    implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
     implementation(libs.viewpager2);
     implementation(libs.media)
@@ -71,4 +72,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }
