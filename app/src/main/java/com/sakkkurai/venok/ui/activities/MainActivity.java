@@ -25,6 +25,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.sakkkurai.venok.services.MusicService;
+import com.sakkkurai.venok.tools.AudioTools;
 import com.sakkkurai.venok.tools.Updater;
 import com.sakkkurai.venok.ui.fragments.ArtistFragment;
 import com.sakkkurai.venok.ui.fragments.HomeFragment;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
             switch (requestCode){
-                case 1001:
+                case AudioTools.REQUEST_DELETE_SONG:
                     if (resultCode == Activity.RESULT_OK) {
                         Toast.makeText(this, R.string.music_songinfo_delete_successfully, Toast.LENGTH_SHORT).show();
                         FragmentManager fm = getSupportFragmentManager();

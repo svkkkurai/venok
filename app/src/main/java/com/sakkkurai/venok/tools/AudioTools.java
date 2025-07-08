@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AudioTools {
+    public static final int REQUEST_DELETE_SONG = 1001;
+
 
     private MediaMetadataRetriever retriever;
 
@@ -66,7 +68,7 @@ public class AudioTools {
             PendingIntent pendingIntent = MediaStore.createDeleteRequest(resolver, uris);
             ((Activity) context).startIntentSenderForResult(
                     pendingIntent.getIntentSender(),
-                    1001,
+                    REQUEST_DELETE_SONG,
                     null, 0, 0, 0
             );
         } catch (IntentSender.SendIntentException e) {
