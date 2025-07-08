@@ -91,7 +91,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
             String[] music_items = v.getResources().getStringArray(R.array.music_options_menu);
             builder.setItems(music_items, (((dialog, which) -> {
                         try {
-                            musicItemsMenuHandler(which, tracks.get(position));
+                            musicItemsMenuHandler(which, tracks.get(position), position);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -118,7 +118,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         });
     }
 
-    private void musicItemsMenuHandler(int which, Track track) throws IOException {
+    private void musicItemsMenuHandler(int which, Track track, int position) throws IOException {
         switch (which) {
             case 0:
                 Bitmap trackArtBm = getTrackArt(track.getAudioPath());
@@ -168,7 +168,8 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
                         .setCancelable(true)
                         .setPositiveButton(R.string.music_songinfo_delete, (dialog, which1) -> {
                             AudioTools mdg = new AudioTools(this.context);
-                            mdg.deleteTrack(track.getAudioPath(), this.context);
+                            mdg.deleteTrack(this.context, track.getAudioPath(), position);
+                            Log.d("DeleteItem", "Adapter: " + position);
                         })
                         .setNegativeButton(R.string.music_songinfo_delete_cancel, (dialog, which1) -> {
                             dialog.dismiss();
@@ -265,6 +266,10 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         });
     }
 
+    public void removeItemAt(int position) {
+        tracks.remove(position);
+        notifyItemRemoved(position);
+    }
 
 
 

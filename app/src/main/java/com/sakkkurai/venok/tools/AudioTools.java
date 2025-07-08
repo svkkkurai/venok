@@ -13,11 +13,13 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.Mp3File;
 import com.sakkkurai.venok.R;
+import com.sakkkurai.venok.ui.activities.MainActivity;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -38,7 +40,6 @@ public class AudioTools {
 
 
     private MediaMetadataRetriever retriever;
-
     private Context context;
 
     public AudioTools(Context context) {
@@ -46,25 +47,21 @@ public class AudioTools {
         this.retriever = new MediaMetadataRetriever();
     }
 
-    public void deleteTrack(String trackPath, Context context) {
+    public void deleteTrack(Context context, String trackPath, int position) {
         ContentResolver resolver = context.getContentResolver();
 
         Uri uri = getMediaStoreUri(trackPath, resolver);
         if (uri == null) {
             Toast.makeText(context, R.string.music_songinfo_delete_error_notfound, Toast.LENGTH_SHORT).show();
-            if (context instanceof Activity) {
-                Activity activity = (Activity) context;
-                Intent intent = activity.getIntent();
-                activity.finish();
-                activity.startActivity(intent);
-                return;
-            }
+            return;
         }
 
         List<Uri> uris = new ArrayList<>();
         uris.add(uri);
 
         try {
+            Log.d("DeleteItem", "AudioTools: " + position);
+            MainActivity.proccessingRemoveItemPosition = position;
             PendingIntent pendingIntent = MediaStore.createDeleteRequest(resolver, uris);
             ((Activity) context).startIntentSenderForResult(
                     pendingIntent.getIntentSender(),

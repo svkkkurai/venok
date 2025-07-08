@@ -34,7 +34,13 @@ import java.util.concurrent.Executors;
 public class HomeFragment extends Fragment {
 
     RecyclerView trackLibrary;
+    TrackAdapter trackAdapter;
 
+
+    public void removeTrackAt(int position) {
+        Log.d("DeleteItem", "HomeFragment: " + position);
+        trackAdapter.removeItemAt(position);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,7 +101,7 @@ public class HomeFragment extends Fragment {
             List<Track> trackList = getAllAudioFilesInBackground();
 
             mainHandler.post(() -> {
-                TrackAdapter trackAdapter = new TrackAdapter(getContext(), new ArrayList<>(trackList), 0, requireActivity());
+                trackAdapter = new TrackAdapter(getContext(), new ArrayList<>(trackList), 0, requireActivity());
                 trackLibrary.setAdapter(trackAdapter);
                 SharedPreferences prefs = getActivity().getSharedPreferences("temp", MODE_PRIVATE);
                 if (prefs.contains("LIBRARY_SCROLL_POSITION")) {

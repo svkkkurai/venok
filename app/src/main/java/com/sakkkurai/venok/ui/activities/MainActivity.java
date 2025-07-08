@@ -39,10 +39,9 @@ import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
-    int READ_AUDIO_PERMISSION_CODE = 1;
-    int READ_STORAGE_PERMISSION_CODE = 2;
     BottomNavigationView navbar;
     private SharedPreferences.Editor temp_editor;
+    public static int proccessingRemoveItemPosition;
 
 
         @Override
@@ -55,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
                         FragmentManager fm = getSupportFragmentManager();
                         HomeFragment homeFragment = (HomeFragment) fm.findFragmentById(R.id.main_frame_layout);
                         if (homeFragment != null) {
-                            homeFragment.loadAudioFilesAsync();
+                            Log.d("DeleteItem", "MainActivity: " + proccessingRemoveItemPosition);
+                            homeFragment.removeTrackAt(proccessingRemoveItemPosition);
                         }
 
                     } else {
