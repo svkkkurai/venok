@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="4dp"
+
             android:orientation="vertical">
 
             <TextView
@@ -39,17 +40,6 @@
                 android:maxLines="1"
                 android:textColor="?attr/colorPrimary" />
 
-            <TextView
-                android:id="@+id/music_artistName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Artist Name"
-                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:textColor="?attr/colorOnSurface" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -70,14 +60,28 @@
                     android:textColor="?attr/colorOnSurface" />
 
                 <TextView
-                    android:id="@+id/music_trackDuration"
-                    android:visibility="gone"
+                    android:id="@+id/music_artistName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Artist Name"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:textColor="?attr/colorOnSurface" />
+
+                <TextView
+                    android:id="@+id/music_trackDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
                     android:text="3:45"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:textColor="?attr/colorOnSurface"
                     android:layout_marginEnd="8dp" />
+
+
             </LinearLayout>
 
         </LinearLayout>
