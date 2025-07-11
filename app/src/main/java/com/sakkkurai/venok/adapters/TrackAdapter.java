@@ -55,11 +55,14 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
     private QueueDatabase qDB;
     private Activity activity;
     public TrackAdapter(Context context, ArrayList<Track> tracks, int playreason, Activity activity) {
+
         this.context = context;
         this.tracks = tracks;
+
         this.playreason = playreason;
         this.activity = activity;
     }
+
 
 
     @NonNull
@@ -71,8 +74,10 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         return new ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.trackImage.setImageDrawable(null);
         Track currentTrack = tracks.get(position);
 
         holder.trackName.setText(currentTrack.getTrackName());
