@@ -9,8 +9,8 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.sakkkurai.venok" />
-                  <option name="mobileSdkAppId" value="1:509613531561:android:a6bf5c1d5a82c39215e4b8" />
+                  <option name="appId" value="com.sakkkurai.venok.debug" />
+                  <option name="mobileSdkAppId" value="1:509613531561:android:b4d3cc682eaf4d0715e4b8" />
                   <option name="projectId" value="venok-music-player" />
                   <option name="projectNumber" value="509613531561" />
                 </ConnectionSetting>

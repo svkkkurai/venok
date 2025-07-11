@@ -81,27 +81,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/nowplaying_emptyqueue"
+                android:textStyle="bold"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
             <TextView
                 android:id="@+id/songArtist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:maxLines="1"
+                android:layout_marginTop="4dp"
                 android:text="@string/nowplaying_unknown"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp" />
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
 
             <TextView
                 android:id="@+id/songAlbum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:layout_marginTop="2dp"
                 android:text="@string/nowplaying_unknown"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp" />
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
 
         </LinearLayout>
 
@@ -123,6 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-:--"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textColor="?attr/colorOnSurface" />
 
             <com.google.android.material.slider.Slider
@@ -137,6 +141,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-:--"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textColor="?attr/colorOnSurface" />
 
         </LinearLayout>
