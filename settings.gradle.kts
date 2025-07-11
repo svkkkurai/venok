@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "MusicApp"
-include(":app")
+include(":venok")
