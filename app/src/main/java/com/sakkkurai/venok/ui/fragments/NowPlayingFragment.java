@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,7 +25,12 @@ import androidx.media3.session.MediaController;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.slider.Slider;
@@ -41,6 +48,7 @@ import com.sakkkurai.venok.R;
 import com.sakkkurai.venok.tools.AudioTools;
 import com.sakkkurai.venok.services.MusicService;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -100,6 +108,9 @@ public class NowPlayingFragment extends Fragment {
         playImageButton.setOnClickListener(v -> handleControls(ACTION_PLAY));
         nextImageButton.setOnClickListener(v -> handleControls(ACTION_NEXT));
         previousImageButton.setOnClickListener(v -> handleControls(ACTION_PREVIOUS));
+
+
+
         SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                 Log.d(TAG, "Changed key: " + key);
@@ -211,6 +222,42 @@ public class NowPlayingFragment extends Fragment {
         songArtistTextView.setText(artist);
         songAlbumTextView.setText(album);
         isPlaying = mediaController.isPlaying();
+
+        // ClickableSpan
+        String artistSpan = songArtistTextView.getText().toString();
+        String[] artists_span = artistSpan.split(",\\s*");
+        Log.d(TAG, Arrays.toString(artists_span));
+        SpannableString spannable = new SpannableString(artistSpan);
+        int start = 0;
+        for (String part : artists_span) {
+            int end = start + part.length();
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void updateDrawState(@NonNull TextPaint ds) {
+                    super.updateDrawState(ds);
+                    int originalTextColor = songArtistTextView.getCurrentTextColor();
+                    ds.setColor(originalTextColor);
+                    ds.setUnderlineText(false);
+                }
+
+                @Override
+                public void onClick(@NonNull View widget) {
+                    Toast.makeText(widget.getContext(), "Clicked: " + part, Toast.LENGTH_SHORT).show();
+                }
+            };
+
+
+
+            spannable.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            start = end + 2;
+        }
+        songArtistTextView.setText(spannable);
+        songArtistTextView.setHighlightColor(Color.TRANSPARENT);
+        songArtistTextView.setMovementMethod(LinkMovementMethod.getInstance());
+
+
+
+
         if (shouldUpdateArtwork) {
             byte[] artworkData = mediaController.getMediaMetadata().artworkData;
             ExecutorService executorService = Executors.newSingleThreadScheduledExecutor();

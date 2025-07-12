@@ -13,6 +13,7 @@ import android.media.MediaMetadataRetriever;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,10 +51,15 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
     private ArrayList<Track> tracks;
     int np_savedround, np_savedcolor_parsed;
     String np_savedcolor;
+    private final ExecutorService coverExecutor = Executors.newFixedThreadPool(4);
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final LruCache<String, Bitmap> coverCache = new LruCache<>(50);
+
     int playreason;
     private QueueDao queueDao;
     private QueueDatabase qDB;
     private Activity activity;
+    private final String TAG = "TrackAdapter";
     public TrackAdapter(Context context, ArrayList<Track> tracks, int playreason, Activity activity) {
 
         this.context = context;
@@ -121,6 +127,13 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
             playMusic(position);
 
         });
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull ViewHolder holder) {
+        holder.trackImage.setImageDrawable(null);
+        Log.d(TAG, "Recycling: " + holder.trackName.getText());
+        super.onViewRecycled(holder);
     }
 
     private void musicItemsMenuHandler(int which, Track track) throws IOException {
@@ -254,21 +267,38 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         return albumArt;
     }
 
-    private void getTrackArtAsync(Track currentTrack, ImageView trackImage) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-            Bitmap trackArt = getTrackArt(currentTrack.getAudioPath());
-            new Handler(Looper.getMainLooper()).post(() -> {
-                if (trackArt != null) {
-                    RoundedBitmapDrawable rbd = RoundedBitmapDrawableFactory.create(context.getResources(), trackArt);
-                    rbd.setCornerRadius(np_savedround);
-                    trackImage.setImageDrawable(rbd);
-                } else {
-                    trackImage.setImageDrawable(null);
+    private void getTrackArtAsync(Track track, ImageView imageView) {
+        String path = track.getAudioPath();
+        imageView.setTag(path);
+
+        Bitmap cached = coverCache.get(path);
+        if (cached != null) {
+            RoundedBitmapDrawable rbd = RoundedBitmapDrawableFactory.create(context.getResources(), cached);
+            imageView.setImageDrawable(rbd);
+            return;
+        }
+
+        imageView.setImageDrawable(null);
+
+        coverExecutor.execute(() -> {
+            Bitmap trackArt = getTrackArt(path);
+            if (trackArt != null) {
+                coverCache.put(path, trackArt);
+            }
+
+            mainHandler.post(() -> {
+                if (path.equals(imageView.getTag())) {
+                    if (trackArt != null) {
+                        RoundedBitmapDrawable rbd = RoundedBitmapDrawableFactory.create(context.getResources(), trackArt);
+                        imageView.setImageDrawable(rbd);
+                    } else {
+                        imageView.setImageDrawable(null);
+                    }
                 }
             });
         });
     }
+
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -61,50 +61,55 @@
             android:layout_marginEnd="24dp"
             android:background="@drawable/cover_round"
 
-            app:layout_constraintBottom_toTopOf="@id/layout_nowplaying_songInfo"
+            app:layout_constraintBottom_toTopOf="@+id/layout_nowplaying_seekbar"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linearLayout" />
+            app:layout_constraintTop_toBottomOf="@id/linearLayout"
+            app:layout_constraintVertical_bias="0.1500000" />
 
         <LinearLayout
+
             android:id="@+id/layout_nowplaying_songInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
             android:gravity="center"
             android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@id/layout_nowplaying_seekbar">
+            app:layout_constraintBottom_toTopOf="@id/layout_nowplaying_seekbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nowplaying_trackcover">
 
             <TextView
                 android:id="@+id/songName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/nowplaying_emptyqueue"
-                android:textStyle="bold"
-                android:textColor="?attr/colorPrimary"
                 android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
+                android:text="@string/nowplaying_emptyqueue"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/songArtist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
                 android:layout_marginTop="4dp"
+                android:maxLines="1"
                 android:text="@string/nowplaying_unknown"
-                android:textColor="?attr/colorOnSurface"
-                android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:textColor="?attr/colorOnSurface" />
 
             <TextView
                 android:id="@+id/songAlbum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
                 android:layout_marginTop="2dp"
+                android:maxLines="1"
                 android:text="@string/nowplaying_unknown"
-                android:textColor="?attr/colorOnSurface"
-                android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:textColor="?attr/colorOnSurface" />
 
         </LinearLayout>
 
@@ -114,9 +119,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="36dp"
-            android:orientation="horizontal"
+            android:layout_marginBottom="24dp"
             android:gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/layout_nowplaying_songcontrols"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -130,11 +135,11 @@
                 android:textColor="?attr/colorOnSurface" />
 
             <com.google.android.material.slider.Slider
-                app:labelBehavior="gone"
                 android:id="@+id/nowplaying_trackSeekbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                app:labelBehavior="gone" />
 
             <TextView
                 android:id="@+id/nowplaying_playtime_max"
@@ -150,11 +155,10 @@
             android:id="@+id/layout_nowplaying_songcontrols"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="32dp"
             android:gravity="center"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/nowplaying_trackLyrics"
-            tools:layout_editor_absoluteX="0dp">
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageButton
 
@@ -184,20 +188,6 @@
                 android:src="@drawable/nowplaying_next" />
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/nowplaying_trackLyrics"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:text="Lyrics"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
