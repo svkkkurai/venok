@@ -15,10 +15,11 @@ import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.sakkkurai.venok.R;
 import com.sakkkurai.venok.ui.activities.SettingsActivity;
@@ -35,7 +36,31 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         TextView version = view.findViewById(R.id.settings_version);
 
-        LinearLayout appearance = view.findViewById(R.id.settings_appearance);
+        // Appearance
+        View appearance = view.findViewById(R.id.settings_appearance);
+        TextView appearance_title = appearance.findViewById(R.id.settingsholder_title);
+        TextView appearance_desc = appearance.findViewById(R.id.settingsholder_desc);
+        ImageView appearance_ic = appearance.findViewById(R.id.settingsholder_ic);
+        appearance_title.setText(getString(R.string.settings_appearance));
+        MaterialCardView appearance_cardview = appearance.findViewById(R.id.settingsholder_card);
+        appearance_ic.setImageDrawable(getResources().getDrawable(R.drawable.settings_appearance));
+        appearance_cardview.setOnClickListener(v -> {
+            openSettings(SettingsActivity.REASON_APPEARANCE);
+        });
+
+
+        // Playback
+        View playback = view.findViewById(R.id.settings_playback);
+        TextView playback_title = playback.findViewById(R.id.settingsholder_title);
+        TextView playback_desc = playback.findViewById(R.id.settingsholder_desc);
+        ImageView playback_ic = playback.findViewById(R.id.settingsholder_ic);
+        playback_title.setText(getString(R.string.settings_playback));
+        MaterialCardView playback_cardview = playback.findViewById(R.id.settingsholder_card);
+        playback_ic.setImageDrawable(getResources().getDrawable(R.drawable.navbar_play_filled));
+        playback_cardview.setOnClickListener(v -> {
+            openSettings(SettingsActivity.REASON_PLAYBACK);
+        });
+
 
         try {
             PackageManager pm = requireContext().getPackageManager();
@@ -70,15 +95,7 @@ public class SettingsFragment extends Fragment {
                 return false;
             }
         });
-        LinearLayout appearanceLayout = view.findViewById(R.id.settings_appearance);
-        LinearLayout playbackLayout = view.findViewById(R.id.settings_playback);
-        playbackLayout.setOnClickListener(v -> {
-            openSettings(SettingsActivity.REASON_PLAYBACK);
-        });
 
-        appearanceLayout.setOnClickListener(v -> {
-            openSettings(SettingsActivity.REASON_APPEARANCE);
-        });
         return view;
     }
 
