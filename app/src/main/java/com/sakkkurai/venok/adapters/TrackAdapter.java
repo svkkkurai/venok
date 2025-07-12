@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,7 +101,22 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
                 builder.setIcon(R.drawable.setup_info);
             }
             String[] music_items = v.getResources().getStringArray(R.array.music_options_menu);
-            builder.setItems(music_items, (((dialog, which) -> {
+            PopupMenu popupMenu = new PopupMenu(context, v);
+            for (int i = 0; i < music_items.length; i++) {
+                popupMenu.getMenu().add(0, i, i, music_items[i]);
+            }
+            popupMenu.show();
+            popupMenu.setOnMenuItemClickListener(item -> {
+                int id = item.getItemId();
+                try {
+                    musicItemsMenuHandler(id, currentTrack);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            });
+
+            /*builder.setItems(music_items, (((dialog, which) -> {
                         try {
                             musicItemsMenuHandler(which, tracks.get(position));
                         } catch (IOException e) {
@@ -108,7 +124,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
                         }
                     })))
                     .setTitle(tracks.get(position).getTrackName())
-                    .show();
+                    .show();*/
 
         });
 
@@ -179,7 +195,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
                 break;
             case 2:
                 File file = new File(track.getAudioPath());
-                String name = track.getTrackName();
+                String name = track.getArtistName() + " - " + track.getTrackName();
                 MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);
                 builder1.setTitle(R.string.music_songinfo_delete_title)
                         .setMessage(context.getString(R.string.music_songinfo_delete_confirmation, name))

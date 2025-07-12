@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/settings_playback_muteatzerovolume"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/muteZeroVolumeSwitch"
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/settings_playback_autolaunch"
-                android:textSize="16sp" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/autolaunchSwitch"

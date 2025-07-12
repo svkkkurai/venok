@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/setup_permissionrequire"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="36sp"
+                android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -59,7 +59,7 @@
             android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="@string/setup_permission"
-            android:textSize="15sp" />
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
     </LinearLayout>
         <!-- Permissions List -->
         <LinearLayout
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/setup_permission_text"
                     android:textColor="?attr/colorPrimary"
-                    android:textSize="28sp"
+                    android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -133,7 +133,7 @@
                         android:layout_marginStart="8dp"
                         android:text="@string/setup_audio"
                         android:textColor="?attr/colorPrimary"
-                        android:textSize="14sp"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                         android:textStyle="bold" />
 
                     <TextView
@@ -142,7 +142,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="@string/setup_audio_description"
-                        android:textSize="12sp" />
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
                 </LinearLayout>
 
                 <ImageView
@@ -188,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/setup_scan"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="28sp"
+                android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -197,6 +197,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:id="@+id/setup_scan_desc"
             android:gravity="center"
             android:text="@string/setup_scan_text" />
@@ -213,6 +214,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
+                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                 app:layout_constraintBottom_toBottomOf="@+id/setup_seekbar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/setup_seekbar" />
@@ -237,6 +239,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="15"
+                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                 app:layout_constraintBottom_toBottomOf="@+id/setup_seekbar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/setup_seekbar" />
@@ -246,11 +249,12 @@
 
     <Button
         android:id="@+id/setup_appsettingsbutton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
         android:background="@android:color/transparent"
+        android:gravity="center_vertical"
         android:onClick="openAppSettings"
         android:text="@string/setup_appsettings"
         android:textColor="?attr/colorPrimary"

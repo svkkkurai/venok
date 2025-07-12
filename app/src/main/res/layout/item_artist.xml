@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/item_artist_artistnametitle"
-        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         android:padding="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

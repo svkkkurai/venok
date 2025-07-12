@@ -75,7 +75,7 @@ public class SetupPagerAdapter extends RecyclerView.Adapter<SetupPagerAdapter.Vi
             Button setupGetStartedButton = holder.itemView.findViewById(R.id.setup_getstarted_button);
             if (setupGetStartedButton != null) {
                 setupGetStartedButton.setOnClickListener(v -> viewPager.setCurrentItem(1, true));
-            Button getHelp = holder.itemView.findViewById(R.id.setup_gethelp);
+            Button getHelp = holder.itemView.findViewById(R.id.setup_privacy);
             getHelp.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

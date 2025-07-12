@@ -24,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/settings_appearance_round_text"
-                android:textSize="14sp" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                     android:layout_gravity="center"
                     android:layout_marginEnd="8dp"
                     android:text="0"
-                    android:textSize="12sp" />
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
 
                 <com.google.android.material.slider.Slider
                     android:id="@+id/appearance_np_cornerradius_seekbar"
@@ -57,7 +57,7 @@
                     android:layout_gravity="center"
                     android:layout_marginStart="8dp"
                     android:text="32"
-                    android:textSize="12sp" />
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
             </LinearLayout>
  <!---
             <FrameLayout
