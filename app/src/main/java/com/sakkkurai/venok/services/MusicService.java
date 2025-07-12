@@ -298,6 +298,7 @@ public class MusicService extends MediaSessionService {
                     if(autoplay) {
                         if (requestAF() == AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
                             mediaPlayer.play();
+                            Toast.makeText(this, getString(R.string.autoplay_onplay), Toast.LENGTH_SHORT).show();
                     }
                     Log.d("MusicService", "MediaItems count: " + mediaPlayer.getMediaItemCount());
                 }

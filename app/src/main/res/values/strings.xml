@@ -123,6 +123,7 @@
     <string name="nowplaying_emptyqueue">[QUEUE IS EMPTY]</string>
     <string name="nowplaying_unknown">&lt;unknown&gt;</string>
     <string name="muted_zero_volume">Volume is 0 — playback is paused.</string>
+    <string name="autoplay_onplay">Autoplay is on — playback started.</string>
     <string name="unmuted_zero_volume">Volume is back — playback resumes.</string>
     <string name="updater_updateavailable_title">Update available! 🔝</string>
     <string name="updater_updateavailable">"✨Good news! New update is waiting up your download!\n\n"</string>

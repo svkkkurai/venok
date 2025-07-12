@@ -2,9 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nowPlayingFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/nowPlayingFragment"
     android:fitsSystemWindows="true"
     tools:context=".ui.fragments.NowPlayingFragment">
 
@@ -20,9 +20,9 @@
             android:layout_marginTop="8dp"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:visibility="visible">
 
             <LinearLayout
@@ -60,16 +60,14 @@
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/cover_round"
-
-            app:layout_constraintBottom_toTopOf="@+id/layout_nowplaying_seekbar"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/linearLayout"
-            app:layout_constraintVertical_bias="0.1500000" />
+            app:layout_constraintBottom_toTopOf="@id/layout_nowplaying_songInfo"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.15" />
 
         <LinearLayout
-
             android:id="@+id/layout_nowplaying_songInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -77,10 +75,10 @@
             android:layout_marginEnd="24dp"
             android:gravity="center"
             android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/nowplaying_trackcover"
             app:layout_constraintBottom_toTopOf="@id/layout_nowplaying_seekbar"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nowplaying_trackcover">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
                 android:id="@+id/songName"
@@ -123,8 +121,8 @@
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/layout_nowplaying_songcontrols"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
                 android:id="@+id/nowplaying_playtime_current"
@@ -161,7 +159,6 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageButton
-
                 android:id="@+id/nowplaying_controls_previous"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
